@@ -15,22 +15,14 @@ const {
 </script>
 
 <template>
-  <div class="p-xl space-y-xl">
+  <div class="p-md lg:p-xl space-y-xl">
     <!-- Page Header -->
-    <div class="flex justify-between items-end">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md">
       <div>
         <h2 class="font-headline-md text-headline-md text-primary">Gestión de Clientes</h2>
         <p class="text-on-surface-variant font-body-md text-body-md">
           Administración y visualización de todos los registros
         </p>
-      </div>
-      <div class="flex gap-md">
-        <button
-          class="px-md py-sm bg-primary text-on-primary font-label-md rounded-lg flex items-center gap-xs hover:opacity-90 transition-all shadow-sm"
-        >
-          <span class="material-symbols-outlined text-[18px]">add</span>
-          Nuevo Cliente
-        </button>
       </div>
     </div>
 

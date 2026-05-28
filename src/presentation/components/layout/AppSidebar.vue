@@ -2,6 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useReportModal } from '@/presentation/composables/use-report-modal.composable'
+import { useSidebar } from '@/presentation/composables/use-sidebar.composable'
 
 interface NavItem {
   label: string
@@ -18,7 +19,8 @@ const navItems: NavItem[] = [
 
 const route = useRoute()
 const router = useRouter()
-const { open } = useReportModal()
+const { open: openReportModal } = useReportModal()
+const { isOpen, close } = useSidebar()
 
 const activeRouteName = computed(() => route.name as string)
 
@@ -28,17 +30,27 @@ function isActive(item: NavItem): boolean {
 
 function navigate(item: NavItem): void {
   router.push({ name: item.routeName })
+  close() // cerrar sidebar en mobile
 }
 </script>
 
 <template>
   <aside
-    class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-xl z-40"
+    class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-xl z-40 transition-transform duration-300 lg:translate-x-0"
+    :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
   >
-    <!-- Brand -->
-    <div class="px-xl mb-xl">
-      <h1 class="font-headline-md text-headline-md font-bold text-primary">XCien</h1>
-      <p class="text-on-surface-variant font-label-md text-label-md">Hub Empresarial</p>
+    <!-- Brand + Close -->
+    <div class="px-xl mb-xl flex items-center justify-between">
+      <div>
+        <h1 class="font-headline-md text-headline-md font-bold text-primary">XCien</h1>
+        <p class="text-on-surface-variant font-label-md text-label-md">Hub Empresarial</p>
+      </div>
+      <button
+        class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors lg:hidden text-on-surface-variant"
+        @click="close"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
 
     <!-- Navigation -->
@@ -63,7 +75,7 @@ function navigate(item: NavItem): void {
     <div class="mt-auto px-xl pt-xl space-y-4">
       <button
         class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-md hover:opacity-90 transition-all"
-        @click="open"
+        @click="openReportModal(); close()"
       >
         Descargar Reportes
       </button>

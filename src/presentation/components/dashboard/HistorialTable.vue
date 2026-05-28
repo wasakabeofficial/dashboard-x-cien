@@ -46,9 +46,10 @@ function formatEstado(estado: string): string {
   <section
     class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-[30rem]"
   >
-    <!-- Cuerpo de la tabla (scrollable) -->
+    <!-- Cuerpo de la tabla (scrollable vertical y horizontal) -->
     <div class="flex-1 overflow-y-auto">
-      <table v-if="hasData" class="w-full text-left border-collapse">
+      <div v-if="hasData" class="min-w-0 overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[600px]">
         <thead class="sticky top-0 z-10">
           <tr class="bg-surface-container-low border-b border-outline-variant">
             <th
@@ -121,6 +122,7 @@ function formatEstado(estado: string): string {
           </tr>
         </tbody>
       </table>
+      </div>
 
       <!-- Empty State -->
       <div v-else class="flex flex-col items-center justify-center h-full text-on-surface-variant">

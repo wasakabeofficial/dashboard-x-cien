@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="bg-surface-container-lowest p-xl rounded-xl border border-outline-variant">
+  <div class="bg-surface-container-lowest p-md lg:p-xl rounded-xl border border-outline-variant">
     <h4 class="font-headline-sm text-headline-sm text-primary mb-xl">Distribución por Estado</h4>
 
     <!-- Abstract Pie Chart -->

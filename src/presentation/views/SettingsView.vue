@@ -2,8 +2,8 @@
 </script>
 
 <template>
-  <div class="p-xl space-y-xl">
-    <div class="flex justify-between items-end">
+  <div class="p-md lg:p-xl space-y-xl">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md">
       <div>
         <h2 class="font-headline-md text-headline-md text-primary">Configuración</h2>
         <p class="text-on-surface-variant font-body-md text-body-md">

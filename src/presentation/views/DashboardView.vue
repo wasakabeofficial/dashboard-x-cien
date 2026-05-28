@@ -11,16 +11,16 @@ const {
 </script>
 
 <template>
-  <div class="p-xl space-y-xl">
+  <div class="p-md lg:p-xl space-y-xl">
     <!-- Page Header -->
-    <div class="flex justify-between items-end">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md">
       <div>
         <h2 class="font-headline-md text-headline-md text-primary">Panel Operativo</h2>
         <p class="text-on-surface-variant font-body-md text-body-md">
           Bienvenido de nuevo, Administrador. Aquí está el resumen de hoy.
         </p>
       </div>
-      <div class="flex gap-md">
+      <div class="flex gap-md shrink-0">
         <button
           class="px-md py-sm bg-surface-container-lowest border border-outline text-secondary font-label-md rounded-lg flex items-center gap-xs hover:bg-surface-container-low transition-all"
         >
@@ -50,14 +50,14 @@ const {
     <!-- Dashboard Content -->
     <template v-if="dashboardData && !dashboardLoading">
       <!-- KPI Cards -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md lg:gap-xl">
         <KpiCard v-for="kpi in dashboardData.kpis" :key="kpi.title" :data="kpi" />
       </section>
 
       <!-- Charts & Insights -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-md lg:gap-xl">
         <!-- Distribution Chart -->
-        <div class="lg:col-span-4">
+        <div class="lg:col-span-12 xl:col-span-4">
           <DistributionChart
             :items="dashboardData.distribution"
             :success-rate="dashboardData.successRate"
@@ -65,7 +65,7 @@ const {
         </div>
 
         <!-- Actionable Insights -->
-        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div class="lg:col-span-12 xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-md">
           <!-- Campaign Optimization -->
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'campaign')"

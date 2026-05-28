@@ -44,18 +44,18 @@ function getStatusBadgeClass(status: string): string {
 </script>
 
 <template>
-  <div class="p-xl space-y-xl">
+  <div class="p-md lg:p-xl space-y-xl">
     <!-- Header con botón volver -->
     <div class="flex items-center gap-md">
       <button
-        class="p-sm rounded-lg border border-outline-variant hover:bg-surface-container-low transition-all"
+        class="p-sm rounded-lg border border-outline-variant hover:bg-surface-container-low transition-all shrink-0"
         @click="goBack"
       >
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
-      <div>
-        <h2 class="font-headline-md text-headline-md text-primary">Detalle del Cliente</h2>
-        <p class="text-on-surface-variant font-body-md text-body-md">
+      <div class="min-w-0">
+        <h2 class="font-headline-md text-headline-md text-primary truncate">Detalle del Cliente</h2>
+        <p class="text-on-surface-variant font-body-md text-body-md truncate">
           Información completa del registro
         </p>
       </div>

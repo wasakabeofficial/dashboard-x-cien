@@ -59,15 +59,16 @@ function goBack(): void {
 </script>
 
 <template>
-  <div class="p-xl space-y-xl">
+  <div class="p-md lg:p-xl space-y-xl">
     <!-- Header -->
     <div class="flex items-center gap-lg">
       <button
-        class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md"
+        class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md shrink-0"
         @click="goBack"
       >
         <span class="material-symbols-outlined">arrow_back</span>
-        Volver al historial
+        <span class="hidden sm:inline">Volver al historial</span>
+        <span class="sm:hidden">Volver</span>
       </button>
     </div>
 
