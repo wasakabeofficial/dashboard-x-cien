@@ -139,14 +139,14 @@ function hasActiveFilters(): boolean {
       </section>
 
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-md">
-        <div class="lg:col-span-12 xl:col-span-4">
+        <div class="lg:col-span-12 xl:col-span-8">
           <DistributionChart
             :items="dashboardData.distribution"
             :success-rate="dashboardData.successRate"
           />
         </div>
 
-        <div class="lg:col-span-12 xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-md">
+        <div class="lg:col-span-12 xl:col-span-4 space-y-md">
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'alert')"
             :key="insight.type"
@@ -186,7 +186,7 @@ function hasActiveFilters(): boolean {
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'suggestion')"
             :key="insight.type"
-            class="md:col-span-2 bg-gradient-to-br from-secondary-container/40 to-secondary-container/20 p-md rounded-2xl flex items-center justify-between border border-secondary-container/60 shadow-sm"
+            class="bg-gradient-to-br from-secondary-container/40 to-secondary-container/20 p-md rounded-2xl flex items-center justify-between border border-secondary-container/60 shadow-sm"
           >
             <div class="flex items-center gap-md">
               <div class="bg-surface-container-lowest p-sm rounded-xl shadow-sm">

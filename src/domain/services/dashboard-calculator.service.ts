@@ -7,6 +7,7 @@ export class DashboardCalculatorService {
     const avgDuration = total > 0
       ? records.reduce((sum, r) => sum + r.durationMinutes, 0) / total
       : 0
+    const successRate = this.calcSuccessRate(records)
 
     return [
         {
@@ -14,7 +15,7 @@ export class DashboardCalculatorService {
             value: total.toLocaleString(),
             subtitle: total > 0 ? 'Llamadas registradas en el período' : 'Sin registros',
             icon: 'call',
-            trend: { value: `${total} registros`, direction: 'up' },
+            trend: { value: `${total} ${total === 1 ? 'registro' : 'registros'}`, direction: 'up' },
             colorClass: 'bg-primary-fixed text-on-primary-fixed',
         },
         {
@@ -22,8 +23,16 @@ export class DashboardCalculatorService {
             value: total > 0 ? `${avgDuration.toFixed(1)} min` : '—',
             subtitle: total > 0 ? 'Tiempo promedio por llamada' : 'Sin mediciones',
             icon: 'timer',
-            trend: { value: `${total} mediciones`, direction: 'up' },
+            trend: { value: `${total} ${total === 1 ? 'medición' : 'mediciones'}`, direction: 'up' },
             colorClass: 'bg-tertiary-fixed text-on-tertiary-fixed',
+        },
+        {
+            title: 'Tasa de Éxito',
+            value: `${successRate}%`,
+            subtitle: 'Casos resueltos o en proceso',
+            icon: 'check_circle',
+            trend: { value: `${successRate}% éxito`, direction: successRate >= 50 ? 'up' : 'down' },
+            colorClass: 'bg-secondary-fixed text-on-secondary-fixed',
         },
     ]
   }
