@@ -28,18 +28,6 @@ function goToDetail(clientId: string): void {
   <section
     class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-[30rem]"
   >
-    <!-- Header (fijo) -->
-    <div
-      class="p-xl border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50 shrink-0"
-    >
-      <div>
-        <h4 class="font-headline-sm text-headline-sm text-primary">Gestión de Clientes</h4>
-        <p class="text-body-sm text-on-surface-variant">
-          Visualización y administración de registros activos
-        </p>
-      </div>
-    </div>
-
     <!-- Cuerpo de la tabla (scrollable) -->
     <div class="flex-1 overflow-y-auto">
       <table v-if="hasData" class="w-full text-left border-collapse">
