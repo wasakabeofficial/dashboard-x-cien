@@ -27,12 +27,6 @@ const {
           <span class="material-symbols-outlined text-[18px]">filter_list</span>
           Filtros
         </button>
-        <button
-          class="px-md py-sm bg-primary text-on-primary font-label-md rounded-lg flex items-center gap-xs hover:opacity-90 transition-all shadow-sm"
-        >
-          <span class="material-symbols-outlined text-[18px]">add</span>
-          Nueva Tarea
-        </button>
       </div>
     </div>
 

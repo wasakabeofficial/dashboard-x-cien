@@ -2,6 +2,7 @@
 import AppSidebar from '@/presentation/components/layout/AppSidebar.vue'
 import AppTopNav from '@/presentation/components/layout/AppTopNav.vue'
 import AppFooter from '@/presentation/components/layout/AppFooter.vue'
+import DownloadReportsModal from '@/presentation/components/layout/DownloadReportsModal.vue'
 </script>
 
 <template>
@@ -17,4 +18,7 @@ import AppFooter from '@/presentation/components/layout/AppFooter.vue'
 
     <AppFooter />
   </main>
+
+  <!-- Modal global de descarga de reportes -->
+  <DownloadReportsModal />
 </template>

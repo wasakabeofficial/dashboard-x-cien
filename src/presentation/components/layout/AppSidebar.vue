@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { useReportModal } from '@/presentation/composables/use-report-modal.composable'
 
 interface NavItem {
   label: string
@@ -17,6 +18,7 @@ const navItems: NavItem[] = [
 
 const route = useRoute()
 const router = useRouter()
+const { open } = useReportModal()
 
 const activeRouteName = computed(() => route.name as string)
 
@@ -61,6 +63,7 @@ function navigate(item: NavItem): void {
     <div class="mt-auto px-xl pt-xl space-y-4">
       <button
         class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-md hover:opacity-90 transition-all"
+        @click="open"
       >
         Descargar Reportes
       </button>
