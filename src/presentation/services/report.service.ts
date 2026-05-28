@@ -21,14 +21,12 @@ export interface ReportUseCases {
 
 export type ReportSection =
   | 'total_llamadas'
-  | 'costos_totales'
   | 'duracion_promedio'
   | 'gestion_clientes'
   | 'historial'
 
 const SECTION_LABELS: Record<ReportSection, string> = {
   total_llamadas: 'Total de Llamadas',
-  costos_totales: 'Costos Totales',
   duracion_promedio: 'Duración Promedio',
   gestion_clientes: 'Gestión de Clientes',
   historial: 'Historial',
@@ -128,7 +126,6 @@ async function prefetchData(
 ): Promise<PrefetchedData> {
   const needsDashboard =
     sections.includes('total_llamadas') ||
-    sections.includes('costos_totales') ||
     sections.includes('duracion_promedio')
   const needsClients = sections.includes('gestion_clientes')
   const needsHistorial = sections.includes('historial')
@@ -179,19 +176,30 @@ function addSection(
     return writeError(doc, y, 'No se pudo cargar el historial.')
   }
 
-  // Si el dashboard falló pero la sección lo necesita
-  if (
-    (section === 'total_llamadas' || section === 'costos_totales' || section === 'duracion_promedio') &&
-    !data.dashboard
-  ) {
-    return writeError(doc, y, 'No se pudieron cargar los datos del dashboard.')
-  }
+   // Si el dashboard falló pero la sección lo necesita
+   if (
+     (section === 'total_llamadas' || section === 'duracion_promedio') &&
+     !data.dashboard
+   ) {
+     return writeError(doc, y, 'No se pudieron cargar los datos del dashboard.');
+   }
+
+   switch (section) {
+     case 'total_llamadas':
+       return addTotalLlamadas(doc, y, data.dashboard!)
+     case 'duracion_promedio':
+       return addDuracionPromedio(doc, y, data.dashboard!)
+     case 'gestion_clientes':
+       return addGestionClientes(doc, y, data.clients!)
+     case 'historial':
+       return addHistorial(doc, y, data.historial!)
+     default:
+       return y
+   }
 
   switch (section) {
     case 'total_llamadas':
       return addTotalLlamadas(doc, y, data.dashboard!)
-    case 'costos_totales':
-      return addCostosTotales(doc, y, data.dashboard!)
     case 'duracion_promedio':
       return addDuracionPromedio(doc, y, data.dashboard!)
     case 'gestion_clientes':
@@ -223,18 +231,7 @@ function addTotalLlamadas(doc: jsPDF, y: number, dashboard: DashboardDataEntity)
   return y + 14
 }
 
-function addCostosTotales(doc: jsPDF, y: number, dashboard: DashboardDataEntity): number {
-  const kpi = dashboard.kpis.find((k) => k.title === 'Costo Total')
-  const value = kpi?.value ?? '—'
-  doc.setFontSize(24)
-  doc.setTextColor(50, 50, 50)
-  doc.text(value, 20, y + 10)
-  y += 20
-  doc.setFontSize(10)
-  doc.setTextColor(100, 100, 100)
-  doc.text(`Suma de costos de todas las llamadas: ${value}`, 20, y + 2)
-  return y + 14
-}
+
 
 function addDuracionPromedio(doc: jsPDF, y: number, dashboard: DashboardDataEntity): number {
   const kpi = dashboard.kpis.find((k) => k.title === 'Duración Promedio')

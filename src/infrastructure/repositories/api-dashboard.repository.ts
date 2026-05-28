@@ -11,6 +11,7 @@ interface ApiTablaRecord {
   callId: string
   durationMInutes: string
   callCost: string
+  transcripcion: string | null
   id: number
   createdAt: string
   updatedAt: string
@@ -33,6 +34,10 @@ export class ApiDashboardRepository implements DashboardRepository {
       successRate: this.calculator.calcSuccessRate(records),
       insights: this.calculator.buildInsights(records),
     }
+  }
+
+  async getTablaRecords(): Promise<TablaRecordEntity[]> {
+    return this.fetchRecords()
   }
 
   private applyFilter(records: TablaRecordEntity[], filter: DashboardFilter): TablaRecordEntity[] {
@@ -84,6 +89,7 @@ export class ApiDashboardRepository implements DashboardRepository {
       callId: raw.callId,
       durationMinutes: parseFloat(raw.durationMInutes) || 0,
       callCost: parseFloat(raw.callCost) || 0,
+      transcripcion: raw.transcripcion ?? null,
       id: raw.id,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,

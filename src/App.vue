@@ -12,7 +12,6 @@ import AppFooter from '@/presentation/components/layout/AppFooter.vue'
 import DownloadReportsModal from '@/presentation/components/layout/DownloadReportsModal.vue'
 import { useSidebar } from '@/presentation/composables/use-sidebar.composable'
 
-// Composition Root: único punto donde presentación importa infraestructura
 provide(GET_CLIENTS_USE_CASE, serviceLocator.getClients())
 provide(GET_HISTORIAL_USE_CASE, serviceLocator.getHistorial())
 provide(GET_DASHBOARD_DATA_USE_CASE, serviceLocator.getDashboardData())
@@ -21,10 +20,7 @@ const { isOpen, close } = useSidebar()
 </script>
 
 <template>
-  <!-- Sidebar (overlay en mobile, fijo en lg+) -->
   <AppSidebar />
-
-  <!-- Overlay backdrop para mobile -->
   <Teleport to="body">
     <Transition name="fade">
       <div
@@ -35,19 +31,14 @@ const { isOpen, close } = useSidebar()
     </Transition>
   </Teleport>
 
-  <!-- Main Content Wrapper -->
   <main class="min-h-screen flex flex-col lg:ml-70">
     <AppTopNav />
-
-    <!-- Page Content (router outlet) -->
     <div class="flex-1 overflow-x-hidden">
       <router-view />
     </div>
 
     <AppFooter />
   </main>
-
-  <!-- Modal global de descarga de reportes -->
   <DownloadReportsModal />
 </template>
 

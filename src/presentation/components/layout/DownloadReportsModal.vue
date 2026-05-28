@@ -25,15 +25,18 @@ const masterCheckboxRef = ref<HTMLInputElement | null>(null)
 
 const items = ref<CheckItem[]>([
   { key: 'total_llamadas', label: 'Total de Llamadas', checked: false },
-  { key: 'costos_totales', label: 'Costos Totales', checked: false },
   { key: 'duracion_promedio', label: 'Duración Promedio', checked: false },
   { key: 'gestion_clientes', label: 'Gestión de Clientes', checked: false },
   { key: 'historial', label: 'Historial', checked: false },
 ])
 
 const totalSelected = computed(() => items.value.filter((i) => i.checked).length)
-const isAllChecked = computed(() => items.value.length > 0 && totalSelected.value === items.value.length)
-const isIndeterminate = computed(() => totalSelected.value > 0 && totalSelected.value < items.value.length)
+const isAllChecked = computed(
+  () => items.value.length > 0 && totalSelected.value === items.value.length,
+)
+const isIndeterminate = computed(
+  () => totalSelected.value > 0 && totalSelected.value < items.value.length,
+)
 
 watch(isIndeterminate, (newVal) => {
   if (masterCheckboxRef.value) {
@@ -67,8 +70,10 @@ async function handleDownload(): Promise<void> {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="isOpen" class="fixed inset-0 z-9999! flex flex-col items-center justify-center p-4 w-screen h-screen">
-        
+      <div
+        v-if="isOpen"
+        class="fixed inset-0 z-9999! flex flex-col items-center justify-center p-4 w-screen h-screen"
+      >
         <div class="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm" @click="close" />
 
         <div
@@ -118,7 +123,9 @@ async function handleDownload(): Promise<void> {
             </div>
           </div>
 
-          <div class="p-6 pt-4 flex items-center justify-end gap-3 border-t border-neutral-100 bg-white">
+          <div
+            class="p-6 pt-4 flex items-center justify-end gap-3 border-t border-neutral-100 bg-white"
+          >
             <button
               class="px-4 py-2 text-sm font-semibold rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
               @click="close"
@@ -130,13 +137,14 @@ async function handleDownload(): Promise<void> {
               :disabled="downloading || totalSelected === 0"
               @click="handleDownload"
             >
-              <span v-if="downloading" class="material-symbols-outlined animate-spin text-[16px]">sync</span>
+              <span v-if="downloading" class="material-symbols-outlined animate-spin text-[16px]"
+                >sync</span
+              >
               <span v-else class="material-symbols-outlined text-[16px]">download</span>
               {{ downloading ? 'Generando...' : 'Descargar' }}
             </button>
           </div>
         </div>
-
       </div>
     </Transition>
   </Teleport>

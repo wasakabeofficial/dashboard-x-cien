@@ -1,4 +1,3 @@
-/** Entidad de negocio: Entrada de historial/incidencia */
 export interface HistorialEntryEntity {
   folio: string
   fecha: string
@@ -9,4 +8,5 @@ export interface HistorialEntryEntity {
   estado: string
   telefono: string
   correo: string
+  transcripcion?: string
 }

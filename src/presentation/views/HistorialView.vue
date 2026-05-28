@@ -7,7 +7,6 @@ import HistorialTable from '@/presentation/components/dashboard/HistorialTable.v
 const { entries, loading, error, searchHistorial, load } = useHistorial()
 const { query: globalQuery } = useSearch()
 
-// Reacciona a la búsqueda global del TopNav
 watch(globalQuery, (q) => {
   if (q.trim()) {
     searchHistorial(q)
@@ -19,7 +18,6 @@ watch(globalQuery, (q) => {
 
 <template>
   <div class="p-md lg:p-xl space-y-xl">
-    <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md">
       <div>
         <h2 class="font-headline-md text-headline-md text-primary">Historial de Incidencias</h2>
@@ -29,7 +27,7 @@ watch(globalQuery, (q) => {
       </div>
     </div>
 
-    <!-- Loading -->
+
     <div
       v-if="loading"
       class="flex items-center justify-center py-12 text-on-surface-variant"
@@ -38,7 +36,7 @@ watch(globalQuery, (q) => {
       Cargando historial...
     </div>
 
-    <!-- Error -->
+
     <div
       v-else-if="error"
       class="bg-error-container text-on-error-container p-xl rounded-xl flex items-center gap-md"
@@ -47,7 +45,7 @@ watch(globalQuery, (q) => {
       <span>{{ error }}</span>
     </div>
 
-    <!-- Table -->
+
     <HistorialTable v-else :entries="entries" />
   </div>
 </template>

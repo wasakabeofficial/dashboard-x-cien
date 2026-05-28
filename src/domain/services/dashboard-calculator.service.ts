@@ -1,46 +1,30 @@
 import type { TablaRecordEntity } from '@/domain/entities/tabla-record.entity'
 import type { KpiEntity, DistributionItemEntity, InsightEntity } from '@/domain/entities/dashboard.entity'
 
-/**
- * Servicio de dominio: Cálculos del dashboard.
- *
- * Responsabilidad única: transformar registros crudos en KPIs, distribución e insights.
- * Principio SRP — esta clase cambia solo si cambia la lógica de cálculo del dashboard.
- * Principio DIP — no depende de nada externo, solo de entidades de dominio.
- */
 export class DashboardCalculatorService {
   buildKpis(records: TablaRecordEntity[]): KpiEntity[] {
     const total = records.length
-    const totalCost = records.reduce((sum, r) => sum + r.callCost, 0)
     const avgDuration = total > 0
       ? records.reduce((sum, r) => sum + r.durationMinutes, 0) / total
       : 0
 
     return [
-      {
-        title: 'Total de Llamadas',
-        value: total.toLocaleString(),
-        subtitle: total > 0 ? 'Llamadas registradas en el período' : 'Sin registros',
-        icon: 'call',
-        trend: { value: `${total} registros`, direction: 'up' },
-        colorClass: 'bg-primary-fixed text-on-primary-fixed',
-      },
-      {
-        title: 'Costo Total',
-        value: `$${totalCost.toFixed(2)} USD`,
-        subtitle: total > 0 ? 'Suma de costos de todas las llamadas' : 'Sin datos',
-        icon: 'payments',
-        trend: { value: `${records.length} llamadas`, direction: 'up' },
-        colorClass: 'bg-secondary-fixed text-on-secondary-fixed',
-      },
-      {
-        title: 'Duración Promedio',
-        value: total > 0 ? `${avgDuration.toFixed(1)} min` : '—',
-        subtitle: total > 0 ? 'Tiempo promedio por llamada' : 'Sin mediciones',
-        icon: 'timer',
-        trend: { value: `${total} mediciones`, direction: 'up' },
-        colorClass: 'bg-tertiary-fixed text-on-tertiary-fixed',
-      },
+        {
+            title: 'Total de Llamadas',
+            value: total.toLocaleString(),
+            subtitle: total > 0 ? 'Llamadas registradas en el período' : 'Sin registros',
+            icon: 'call',
+            trend: { value: `${total} registros`, direction: 'up' },
+            colorClass: 'bg-primary-fixed text-on-primary-fixed',
+        },
+        {
+            title: 'Duración Promedio',
+            value: total > 0 ? `${avgDuration.toFixed(1)} min` : '—',
+            subtitle: total > 0 ? 'Tiempo promedio por llamada' : 'Sin mediciones',
+            icon: 'timer',
+            trend: { value: `${total} mediciones`, direction: 'up' },
+            colorClass: 'bg-tertiary-fixed text-on-tertiary-fixed',
+        },
     ]
   }
 

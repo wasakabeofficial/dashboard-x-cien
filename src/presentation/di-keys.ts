@@ -3,10 +3,6 @@ import type { GetClientsUseCase } from '@/application/use-cases/get-clients.use-
 import type { GetHistorialUseCase } from '@/application/use-cases/get-historial.use-case'
 import type { GetDashboardDataUseCase } from '@/application/use-cases/get-dashboard-data.use-case'
 
-/**
- * Claves tipadas para Vue provide/inject.
- * Único punto donde presentación conoce los tipos de los casos de uso.
- */
 export const GET_CLIENTS_USE_CASE: InjectionKey<GetClientsUseCase> =
   Symbol('getClientsUseCase')
 

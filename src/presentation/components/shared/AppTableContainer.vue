@@ -1,28 +1,4 @@
 <script setup lang="ts">
-/**
- * AppTableContainer — Contenedor reutilizable de tabla con altura fija,
- * scroll, estado vacío, footer y paginación opcional.
- *
- * Uso:
- *   <AppTableContainer
- *     :data="items"
- *     :loading="loading"
- *     empty-message="No hay registros"
- *     :total-records="totalRecords"
- *     :current-page="currentPage"
- *     :total-pages="totalPages"
- *     :page-size="pageSize"
- *     @go-to-page="goToPage"
- *   >
- *     <template #columns>
- *       <th>Col1</th><th>Col2</th>
- *     </template>
- *     <template #row="{ item }">
- *       <td>{{ item.prop1 }}</td><td>{{ item.prop2 }}</td>
- *     </template>
- *   </AppTableContainer>
- */
-
 import { computed } from 'vue'
 
 const props = defineProps<{
@@ -30,7 +6,6 @@ const props = defineProps<{
   loading?: boolean
   emptyMessage?: string
   emptyIcon?: string
-  /** Props de paginación (si se omiten, no se muestra paginación) */
   totalRecords?: number
   currentPage?: number
   totalPages?: number
@@ -52,7 +27,7 @@ function goToPage(page: number): void {
 
 <template>
   <section
-    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-120"
+    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-160"
   >
     <!-- Loading -->
     <div

@@ -14,8 +14,23 @@ interface ApiHistorial {
   Correo: string
 }
 
+interface ApiTablaRecord {
+  sendId: string
+  Content: string
+  clientId: string
+  validationTag: string
+  callId: string
+  durationMInutes: string
+  callCost: string
+  transcripcion: string | null
+  id: number
+  createdAt: string
+  updatedAt: string
+}
+
 export class ApiHistorialRepository implements HistorialRepository {
   private readonly apiUrl = import.meta.env.VITE_API_HISTORIAL_URL
+  private readonly tablaUrl = import.meta.env.VITE_API_TABLA_URL
 
   private getUrl(): string {
     if (!this.apiUrl) {
@@ -26,15 +41,32 @@ export class ApiHistorialRepository implements HistorialRepository {
     return this.apiUrl
   }
 
-  async getAll(): Promise<HistorialEntryEntity[]> {
-    const response = await fetch(this.getUrl())
-
-    if (!response.ok) {
-      throw new Error(`Error al obtener historial: ${response.status} ${response.statusText}`)
+  private getTablaUrl(): string {
+    if (!this.tablaUrl) {
+      throw new Error(
+        'Falta VITE_API_TABLA_URL en el archivo .env. Copia .env.example como .env y completa las variables.',
+      )
     }
+    return this.tablaUrl
+  }
 
-    const data: ApiHistorial[] = await response.json()
-    return data.map((item) => this.mapToEntity(item))
+  async getAll(): Promise<HistorialEntryEntity[]> {
+    const [historialData, tablaData] = await Promise.all([
+      this.fetchHistorial(),
+      this.fetchTabla(),
+    ])
+
+    const transcripcionMap = this.buildTranscripcionMap(tablaData)
+
+    return historialData.map((item) => {
+      const entity = this.mapToEntity(item)
+      const clientIdKey = String(item['ID Cliente'])
+      const transcripcion = transcripcionMap.get(clientIdKey)
+      if (transcripcion) {
+        entity.transcripcion = transcripcion
+      }
+      return entity
+    })
   }
 
   async getByFolio(folio: string): Promise<HistorialEntryEntity | null> {
@@ -55,6 +87,46 @@ export class ApiHistorialRepository implements HistorialRepository {
         e.correo.toLowerCase().includes(term) ||
         e.situacion.toLowerCase().includes(term),
     )
+  }
+
+  private async fetchHistorial(): Promise<ApiHistorial[]> {
+    const response = await fetch(this.getUrl())
+    if (!response.ok) {
+      throw new Error(`Error al obtener historial: ${response.status} ${response.statusText}`)
+    }
+    return response.json()
+  }
+
+  private async fetchTabla(): Promise<ApiTablaRecord[]> {
+    try {
+      const response = await fetch(this.getTablaUrl())
+      if (!response.ok) {
+        console.warn(`No se pudieron obtener datos de tabla: ${response.status}`)
+        return []
+      }
+      return response.json()
+    } catch (err) {
+      console.warn('Error al consumir getTablaVue para enriquecer historial:', err)
+      return []
+    }
+  }
+
+  private buildTranscripcionMap(records: ApiTablaRecord[]): Map<string, string> {
+    const map = new Map<string, string>()
+
+    const sorted = [...records].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+
+    for (const record of sorted) {
+      if (record.transcripcion && record.transcripcion.trim().length > 0) {
+        if (!map.has(record.clientId)) {
+          map.set(record.clientId, record.transcripcion)
+        }
+      }
+    }
+
+    return map
   }
 
   private mapToEntity(item: ApiHistorial): HistorialEntryEntity {

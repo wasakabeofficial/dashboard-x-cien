@@ -1,4 +1,3 @@
-/** Entidad de negocio: Indicador KPI */
 export interface KpiEntity {
   title: string
   value: string
@@ -11,14 +10,12 @@ export interface KpiEntity {
   colorClass: string
 }
 
-/** Entidad de negocio: Elemento de distribución */
 export interface DistributionItemEntity {
   label: string
   value: number
   colorClass: string
 }
 
-/** Entidad de negocio: Dato completo del dashboard */
 export interface DashboardDataEntity {
   kpis: KpiEntity[]
   distribution: DistributionItemEntity[]
@@ -26,7 +23,6 @@ export interface DashboardDataEntity {
   insights: InsightEntity[]
 }
 
-/** Entidad de negocio: Insight / alerta */
 export interface InsightEntity {
   type: 'campaign' | 'alert' | 'suggestion'
   title?: string
@@ -36,7 +32,6 @@ export interface InsightEntity {
   suggestion?: string
 }
 
-/** Filtros disponibles para el dashboard */
 export interface DashboardFilter {
   period?: 'all' | '7d' | '30d' | '90d'
   validationTag?: string

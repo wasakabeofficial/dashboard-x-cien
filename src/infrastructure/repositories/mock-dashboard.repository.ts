@@ -1,5 +1,6 @@
 import type { DashboardRepository } from '@/domain/repositories/dashboard-repository.interface'
 import type { DashboardDataEntity, DashboardFilter } from '@/domain/entities/dashboard.entity'
+import type { TablaRecordEntity } from '@/domain/entities/tabla-record.entity'
 
 export class MockDashboardRepository implements DashboardRepository {
   async getDashboardData(_filter?: DashboardFilter): Promise<DashboardDataEntity> {
@@ -64,5 +65,10 @@ export class MockDashboardRepository implements DashboardRepository {
 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  async getTablaRecords(): Promise<TablaRecordEntity[]> {
+    await this.delay(100)
+    return []
   }
 }

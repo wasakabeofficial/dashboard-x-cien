@@ -1,10 +1,6 @@
 import type { ClientRepository } from '@/domain/repositories/client-repository.interface'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 
-/**
- * Implementación mock del repositorio de clientes.
- * Se mantiene para propósitos de testing o fallback.
- */
 export class MockClientRepository implements ClientRepository {
   private readonly clients: ClientEntity[] = [
     {

@@ -1,13 +1,10 @@
-/** Entidad de negocio: Cliente */
 export interface ClientEntity {
-  // --- Campos principales (tabla resumen) ---
   id: string
   name: string
   contactoPrincipal: string
   phone: string
   email: string
 
-  // --- Campos para el detalle ---
   folio: string
   date: string
   initials: string

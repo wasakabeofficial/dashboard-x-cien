@@ -8,9 +8,10 @@ const route = useRoute()
 const router = useRouter()
 const { getEntryByFolio } = useHistorial()
 
-const entry = ref<HistorialEntryEntity | null>(null)
+const entry = ref<(HistorialEntryEntity & { transcripcion?: string | null }) | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const mostrarTranscripcion = ref(false)
 
 const folio = route.params.folio as string
 
@@ -184,6 +185,42 @@ function goBack(): void {
         <p class="text-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
           {{ entry.situacion }}
         </p>
+      </div>
+
+      <!-- NUEVA SECCIÓN: Transcripción de la Llamada (Join de getHistorialVue) -->
+      <div
+        v-if="entry.transcripcion"
+        class="bg-surface-container-lowest rounded-xl border border-outline-variant p-xl space-y-md transition-all duration-200"
+      >
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-sm text-primary">
+            <span class="material-symbols-outlined">description</span>
+            <h3 class="font-title-md text-title-md font-semibold">
+              Transcripción de Audio Dispobible
+            </h3>
+          </div>
+
+          <button
+            @click="mostrarTranscripcion = !mostrarTranscripcion"
+            class="flex items-center gap-xs px-md py-xs rounded-lg border border-outline hover:bg-surface-variant/20 text-body-md text-on-surface transition-colors"
+          >
+            <span>{{ mostrarTranscripcion ? 'Ocultar diálogo' : 'Leer transcripción' }}</span>
+            <span
+              class="material-symbols-outlined transition-transform duration-200"
+              :class="{ 'rotate-180': mostrarTranscripcion }"
+            >
+              keyboard_arrow_down
+            </span>
+          </button>
+        </div>
+
+        <!-- Contenedor del texto colapsable con formato de diálogo chat/consola -->
+        <div
+          v-show="mostrarTranscripcion"
+          class="mt-sm bg-surface-container-low rounded-lg p-md border border-outline-variant max-h-112.5 overflow-y-auto"
+        >
+          <pre class="font-mono text-body-sm text-on-surface leading-relaxed whitespace-pre-wrap selection:bg-primary/20">{{ entry.transcripcion }}</pre>
+        </div>
       </div>
     </div>
   </div>

@@ -1,4 +1,3 @@
-/** Entidad de negocio: Registro individual de la tabla de llamadas/incidencias */
 export interface TablaRecordEntity {
   sendId: string
   content: string
@@ -7,6 +6,7 @@ export interface TablaRecordEntity {
   callId: string
   durationMinutes: number
   callCost: number
+  transcripcion: string | null
   id: number
   createdAt: string
   updatedAt: string
