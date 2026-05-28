@@ -2,7 +2,7 @@ import type { ClientRepository } from '@/domain/repositories/client-repository.i
 import type { DashboardRepository } from '@/domain/repositories/dashboard-repository.interface'
 import type { HistorialRepository } from '@/domain/repositories/historial-repository.interface'
 import { ApiClientRepository } from '@/infrastructure/repositories/api-client.repository'
-import { MockDashboardRepository } from '@/infrastructure/repositories/mock-dashboard.repository'
+import { ApiDashboardRepository } from '@/infrastructure/repositories/api-dashboard.repository'
 import { ApiHistorialRepository } from '@/infrastructure/repositories/api-historial.repository'
 import { GetDashboardDataUseCase } from '@/application/use-cases/get-dashboard-data.use-case'
 import { GetClientsUseCase } from '@/application/use-cases/get-clients.use-case'
@@ -26,7 +26,7 @@ class ServiceLocator {
 
   constructor() {
     // --- Bindings ---
-    this.dashboardRepository = new MockDashboardRepository()
+    this.dashboardRepository = new ApiDashboardRepository()
     this.clientRepository = new ApiClientRepository()
     this.historialRepository = new ApiHistorialRepository()
 
