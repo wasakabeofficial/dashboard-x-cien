@@ -28,7 +28,7 @@ function setActive(index: number): void {
   >
     <!-- Brand -->
     <div class="px-xl mb-xl">
-      <h1 class="font-headline-md text-headline-md font-bold text-primary">OpsConsole</h1>
+      <h1 class="font-headline-md text-headline-md font-bold text-primary">XCien</h1>
       <p class="text-on-surface-variant font-label-md text-label-md">Hub Empresarial</p>
     </div>
 
