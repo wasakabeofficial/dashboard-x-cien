@@ -15,7 +15,9 @@ interface ApiTablaRecord {
   createdAt: string
   updatedAt: string
 }
-class ApiDashboardRepository implements DashboardRepository {
+
+
+export class ApiDashboardRepository implements DashboardRepository {
   private readonly apiUrl = import.meta.env.VITE_API_TABLA_URL
   private readonly calculator = new DashboardCalculatorService()
 
@@ -32,7 +34,6 @@ class ApiDashboardRepository implements DashboardRepository {
       insights: this.calculator.buildInsights(records),
     }
   }
-
 
   private applyFilter(records: TablaRecordEntity[], filter: DashboardFilter): TablaRecordEntity[] {
     let filtered = records
@@ -54,7 +55,6 @@ class ApiDashboardRepository implements DashboardRepository {
 
     return filtered
   }
-
 
   private async fetchRecords(): Promise<TablaRecordEntity[]> {
     const url = this.getUrl()

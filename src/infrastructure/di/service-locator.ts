@@ -13,14 +13,18 @@ class ServiceLocator {
   private readonly dashboardRepository: DashboardRepository
   private readonly clientRepository: ClientRepository
   private readonly historialRepository: HistorialRepository
+
   private readonly getDashboardDataUseCase: GetDashboardDataUseCase
   private readonly getClientsUseCase: GetClientsUseCase
   private readonly getHistorialUseCase: GetHistorialUseCase
 
   constructor() {
+    // --- Bindings ---
     this.dashboardRepository = new ApiDashboardRepository()
     this.clientRepository = new ApiClientRepository()
     this.historialRepository = new ApiHistorialRepository()
+
+    // --- Casos de uso ---
     this.getDashboardDataUseCase = new GetDashboardDataUseCase(this.dashboardRepository)
     this.getClientsUseCase = new GetClientsUseCase(this.clientRepository)
     this.getHistorialUseCase = new GetHistorialUseCase(this.historialRepository)
@@ -39,5 +43,5 @@ class ServiceLocator {
   }
 }
 
-
+/** Instancia singleton del Service Locator */
 export const serviceLocator = new ServiceLocator()
