@@ -16,10 +16,19 @@ interface ApiHistorial {
 }
 
 export class ApiHistorialRepository implements HistorialRepository {
-  private readonly apiUrl = 'https://cesar.n8n-wsk.com/webhook/getHistorialVue'
+  private readonly apiUrl = import.meta.env.VITE_API_HISTORIAL_URL
+
+  private getUrl(): string {
+    if (!this.apiUrl) {
+      throw new Error(
+        'Falta VITE_API_HISTORIAL_URL en el archivo .env. Copia .env.example como .env y completa las variables.',
+      )
+    }
+    return this.apiUrl
+  }
 
   async getAll(): Promise<HistorialEntryEntity[]> {
-    const response = await fetch(this.apiUrl)
+    const response = await fetch(this.getUrl())
 
     if (!response.ok) {
       throw new Error(`Error al obtener historial: ${response.status} ${response.statusText}`)

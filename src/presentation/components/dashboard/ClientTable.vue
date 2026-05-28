@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 import { computed } from 'vue'
+import { useNavigationDebounce } from '@/presentation/composables/use-navigation-debounce.composable'
 
 const props = defineProps<{
   clients: ClientEntity[]
@@ -15,12 +15,12 @@ const emit = defineEmits<{
   'go-to-page': [page: number]
 }>()
 
-const router = useRouter()
+const { push } = useNavigationDebounce()
 
 const hasData = computed(() => props.clients.length > 0)
 
 function goToDetail(clientId: string): void {
-  router.push({ name: 'client-detail', params: { id: clientId } })
+  push({ name: 'client-detail', params: { id: clientId } })
 }
 </script>
 

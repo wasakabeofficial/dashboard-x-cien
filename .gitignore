@@ -37,3 +37,8 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+# Environment variables (contain real API URLs / secrets)
+.env
+.env.local
+.env.*.local

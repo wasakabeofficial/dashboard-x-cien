@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useNavigationDebounce } from '@/presentation/composables/use-navigation-debounce.composable'
 
 const props = defineProps<{
   entries: HistorialEntryEntity[]
 }>()
 
-const router = useRouter()
+const { push } = useNavigationDebounce()
 
 const hasData = computed(() => props.entries.length > 0)
 
 function goToDetail(entry: HistorialEntryEntity): void {
-  router.push(`/historial/${entry.folio}`)
+  push(`/historial/${entry.folio}`)
 }
 
 function getEstadoClass(estado: string): string {
