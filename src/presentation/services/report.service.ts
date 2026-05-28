@@ -136,7 +136,7 @@ export async function downloadReport(
     doc.setPage(i)
     doc.setFontSize(8)
     doc.setTextColor(180, 180, 180)
-    doc.text(`Página ${i} de ${totalPages} — XCien Hub Empresarial`, pageW / 2, 280, {
+    doc.text(`Página ${i} de ${totalPages} — XCien Hub Empresarial`, pageW / 2, 275, {
       align: 'center',
     })
   }
@@ -275,7 +275,7 @@ function addHistorialTable(
       h.fecha,
       h.nombreTitular,
       h.categoriaTecnica,
-      { content: h.estado, styles: { cellWidth: 25 } }
+      h.estado
     ]),
     theme: 'plain',
     headStyles: {
@@ -294,16 +294,12 @@ function addHistorialTable(
       fillColor: [249, 250, 251],
     },
     tableWidth: width,
+    columnStyles: {
+      4: { cellWidth: 25 }
+    },
     didParseCell: function(data) {
       if (data.column.index === 4 && data.section === 'body') {
-        const rawValue = data.cell.raw
-        const status = typeof rawValue === 'string' 
-          ? rawValue 
-          : Array.isArray(rawValue) 
-            ? rawValue[0] 
-            : String(rawValue)
-        
-        if (!status) return
+        const status = data.cell.raw as string
         
         if (status === 'soporte_insuficiente') {
           data.cell.styles.textColor = [153, 27, 27]
@@ -335,30 +331,52 @@ function addClientsCard(
   doc.text('Gestión de Clientes', x, y)
   y += 8
 
-  const cardHeight = Math.min(clients.length * 25 + 10, 200)
-  drawCard(doc, x, y, width, cardHeight)
-
-  let currentY = y + 8
-  clients.slice(0, 8).forEach((client) => {
-    if (currentY > y + cardHeight - 10) return
-
-    doc.setFontSize(9)
-    doc.setTextColor(25, 76, 128)
-    doc.text(client.name, x + 5, currentY)
-    currentY += 5
-
-    doc.setFontSize(7)
-    doc.setTextColor(107, 114, 128)
-    doc.text(`Contacto: ${client.contactoPrincipal}`, x + 5, currentY)
-    currentY += 4
-    doc.text(`Tel: ${client.phone}`, x + 5, currentY)
-    currentY += 4
-    doc.text(`Email: ${client.email}`, x + 5, currentY)
-    currentY += 4
-
-    drawStatusBadge(doc, x + 5, currentY, client.status === 'Activo' ? 'resuelto' : 'soporte_insuficiente')
-    currentY += 8
+  autoTable(doc, {
+    startY: y,
+    margin: { left: x, right: 20 },
+    head: [['Empresa', 'Contacto', 'Teléfono', 'Email', 'Estado']],
+    body: clients.map((c) => [
+      c.name,
+      c.contactoPrincipal,
+      c.phone,
+      c.email,
+      c.status === 'Activo' ? 'resuelto' : 'soporte_insuficiente'
+    ]),
+    theme: 'plain',
+    headStyles: {
+      fillColor: [249, 250, 251],
+      textColor: [75, 85, 99],
+      fontStyle: 'bold',
+      fontSize: 8,
+    },
+    styles: {
+      fontSize: 7,
+      cellPadding: 3,
+      lineColor: [229, 231, 235],
+      lineWidth: 0.1,
+    },
+    alternateRowStyles: {
+      fillColor: [249, 250, 251],
+    },
+    tableWidth: width,
+    didParseCell: function(data) {
+      if (data.column.index === 4 && data.section === 'body') {
+        const status = data.cell.raw as string
+        
+        if (status === 'soporte_insuficiente') {
+          data.cell.styles.textColor = [153, 27, 27]
+          data.cell.styles.fillColor = [254, 226, 226]
+        } else if (status === 'resuelto') {
+          data.cell.styles.textColor = [21, 128, 61]
+          data.cell.styles.fillColor = [220, 252, 231]
+        } else {
+          data.cell.styles.textColor = [146, 64, 14]
+          data.cell.styles.fillColor = [254, 243, 199]
+        }
+        data.cell.text[0] = formatStatus(status)
+      }
+    },
   })
 
-  return y + cardHeight
+  return (doc as JsPdfWithAutoTable).lastAutoTable?.finalY ?? y + 10
 }
