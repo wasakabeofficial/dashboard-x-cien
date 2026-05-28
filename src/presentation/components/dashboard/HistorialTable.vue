@@ -96,7 +96,14 @@ function formatEstado(estado: string): string {
                 <div
                   class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-[10px] flex items-center justify-center font-bold"
                 >
-                  {{ entry.nombreTitular.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }}
+                  {{
+                    entry.nombreTitular
+                      .split(' ')
+                      .map((w) => w[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()
+                  }}
                 </div>
                 <span class="text-on-surface">{{ entry.nombreTitular }}</span>
               </div>
@@ -116,10 +123,7 @@ function formatEstado(estado: string): string {
       </table>
 
       <!-- Empty State -->
-      <div
-        v-else
-        class="flex flex-col items-center justify-center h-full text-on-surface-variant"
-      >
+      <div v-else class="flex flex-col items-center justify-center h-full text-on-surface-variant">
         <span class="material-symbols-outlined text-4xl mb-md">history</span>
         <p class="font-body-md text-body-md">No hay registros de historial</p>
       </div>
@@ -133,9 +137,7 @@ function formatEstado(estado: string): string {
         <template v-if="hasData">
           {{ entries.length }} {{ entries.length === 1 ? 'registro' : 'registros' }} en total
         </template>
-        <template v-else>
-          Sin registros
-        </template>
+        <template v-else> Sin registros </template>
       </p>
     </div>
   </section>

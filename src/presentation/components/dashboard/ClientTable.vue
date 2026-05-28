@@ -98,10 +98,7 @@ function goToDetail(clientId: string): void {
       </table>
 
       <!-- Empty State -->
-      <div
-        v-else
-        class="flex flex-col items-center justify-center h-full text-on-surface-variant"
-      >
+      <div v-else class="flex flex-col items-center justify-center h-full text-on-surface-variant">
         <span class="material-symbols-outlined text-4xl mb-md">table_rows</span>
         <p class="font-body-md text-body-md">No hay registros para mostrar</p>
       </div>
@@ -115,9 +112,7 @@ function goToDetail(clientId: string): void {
         <template v-if="hasData">
           Mostrando 1 a {{ Math.min(pageSize, totalRecords) }} de {{ totalRecords }} registros
         </template>
-        <template v-else>
-          Sin registros
-        </template>
+        <template v-else> Sin registros </template>
       </p>
       <div v-if="hasData" class="flex items-center gap-sm">
         <button
@@ -131,11 +126,7 @@ function goToDetail(clientId: string): void {
         <div class="flex items-center gap-xs">
           <template v-for="page in totalPages" :key="page">
             <button
-              v-if="
-                page === 1 ||
-                page === totalPages ||
-                Math.abs(page - currentPage) <= 1
-              "
+              v-if="page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1"
               :class="
                 page === currentPage
                   ? 'w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-label-md text-xs'

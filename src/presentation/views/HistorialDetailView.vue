@@ -72,10 +72,7 @@ function goBack(): void {
     </div>
 
     <!-- Loading -->
-    <div
-      v-if="loading"
-      class="flex items-center justify-center py-12 text-on-surface-variant"
-    >
+    <div v-if="loading" class="flex items-center justify-center py-12 text-on-surface-variant">
       <span class="material-symbols-outlined animate-spin mr-2">sync</span>
       Cargando detalle...
     </div>
@@ -90,7 +87,7 @@ function goBack(): void {
     </div>
 
     <!-- Detail Card -->
-    <div v-else-if="entry" class="max-w-3xl space-y-lg">
+    <div v-else-if="entry" class="max-w-1xl space-y-lg">
       <!-- Title section -->
       <div
         class="bg-surface-container-lowest rounded-xl border border-outline-variant p-xl space-y-lg"
@@ -116,7 +113,9 @@ function goBack(): void {
       <div
         class="bg-surface-container-lowest rounded-xl border border-outline-variant p-xl space-y-lg"
       >
-        <h3 class="font-title-md text-title-md text-on-surface/80 pb-sm border-b border-outline-variant/50">
+        <h3
+          class="font-title-md text-title-md text-on-surface/80 pb-sm border-b border-outline-variant/50"
+        >
           Información General
         </h3>
 
@@ -131,10 +130,14 @@ function goBack(): void {
           </div>
           <div>
             <p class="font-label-md text-label-md text-on-surface-variant mb-xs">Titular</p>
-            <p class="font-body-md text-body-md text-on-surface font-semibold">{{ entry.nombreTitular }}</p>
+            <p class="font-body-md text-body-md text-on-surface font-semibold">
+              {{ entry.nombreTitular }}
+            </p>
           </div>
           <div>
-            <p class="font-label-md text-label-md text-on-surface-variant mb-xs">Categoría Técnica</p>
+            <p class="font-label-md text-label-md text-on-surface-variant mb-xs">
+              Categoría Técnica
+            </p>
             <p class="font-body-md text-body-md text-on-surface">{{ entry.categoriaTecnica }}</p>
           </div>
           <div>
@@ -150,14 +153,18 @@ function goBack(): void {
           <div>
             <p class="font-label-md text-label-md text-on-surface-variant mb-xs">Teléfono</p>
             <div class="flex items-center gap-xs">
-              <span class="material-symbols-outlined text-on-surface-variant text-[14px]">call</span>
+              <span class="material-symbols-outlined text-on-surface-variant text-[14px]"
+                >call</span
+              >
               <p class="font-body-md text-body-md text-on-surface">{{ entry.telefono }}</p>
             </div>
           </div>
           <div>
             <p class="font-label-md text-label-md text-on-surface-variant mb-xs">Correo</p>
             <div class="flex items-center gap-xs">
-              <span class="material-symbols-outlined text-on-surface-variant text-[14px]">mail</span>
+              <span class="material-symbols-outlined text-on-surface-variant text-[14px]"
+                >mail</span
+              >
               <p class="font-body-md text-body-md text-on-surface">{{ entry.correo }}</p>
             </div>
           </div>
@@ -168,7 +175,9 @@ function goBack(): void {
       <div
         class="bg-surface-container-lowest rounded-xl border border-outline-variant p-xl space-y-lg"
       >
-        <h3 class="font-title-md text-title-md text-on-surface/80 pb-sm border-b border-outline-variant/50">
+        <h3
+          class="font-title-md text-title-md text-on-surface/80 pb-sm border-b border-outline-variant/50"
+        >
           Situación
         </h3>
         <p class="text-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
