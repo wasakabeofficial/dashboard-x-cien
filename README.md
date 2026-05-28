@@ -1,6 +1,6 @@
 # Dashboard XCien
 
-Panel operativo para gestión de clientes, historial de incidencias y monitoreo de llamadas. Construido con **Vue 3 + TypeScript + Vite + Tailwind CSS** bajo los principios de **Clean Architecture** y **SOLID**.
+Panel operativo para gestión de clientes, historial de incidencias y monitoreo de llamadas. Construido con **Vue 3 + TypeScript + Vite + Tailwind CSS v4** bajo los principios de **Clean Architecture** y **SOLID**.
 
 ---
 
@@ -12,13 +12,14 @@ El proyecto sigue **Clean Architecture** en 4 capas con dependencias estrictamen
 src/
 ├── domain/          (núcleo — no depende de nada)
 │   ├── entities/     → interfaces de datos de negocio
-│   └── repositories/ → contratos abstractos (puertos)
+│   ├── repositories/ → contratos abstractos (puertos)
+│   └── services/     → lógica de negocio pura
 ├── application/     (casos de uso — solo depende de domain)
 │   └── use-cases/    → orquestación de operaciones de negocio
 ├── infrastructure/  (implementaciones — depende de domain + application)
 │   ├── repositories/ → implementaciones concretas (API, mock)
 │   └── di/           → service locator (composición de dependencias)
-└── presentation/    (UI — depende de domain + application + infrastructure)
+└── presentation/    (UI — depende de domain + application)
     ├── composables/  → estado reactivo Vue
     ├── views/        → páginas Vue
     ├── components/   → componentes UI reutilizables
@@ -35,8 +36,10 @@ application/ ──→ domain/ únicamente ✅
    ↑
 infrastructure/ ──→ domain/ + application/ ✅
    ↑
-presentation/ ──→ cualquier capa interior
+presentation/ ──→ domain/ + application/ únicamente ✅
 ```
+
+La presentación **nunca importa de infraestructura** — la inyección de dependencias se realiza mediante `provide/inject` desde `App.vue` (composition root).
 
 ---
 
@@ -44,24 +47,11 @@ presentation/ ──→ cualquier capa interior
 
 | Principio | Estado | Detalle |
 |-----------|--------|---------|
-| **SRP** (Responsabilidad Única) | ✅ 9/10 | Entidades, interfaces, casos de uso y componentes tienen una responsabilidad clara. `ApiDashboardRepository` (~200 líneas) combina fetch, filtros, KPIs e insights — posible mejora de extracción. |
-| **OCP** (Abierto/Cerrado) | ✅ 8/10 | Interfaces permiten nuevas implementaciones. Casos de uso aceptan filtros opcionales sin modificar la clase base. |
+| **SRP** (Responsabilidad Única) | ✅ 10/10 | Cada clase tiene una responsabilidad única. `ApiDashboardRepository` solo hace fetch + filtros; los cálculos KPIs/distribución/insights están en `DashboardCalculatorService` (dominio). |
+| **OCP** (Abierto/Cerrado) | ✅ 10/10 | Interfaces permiten nuevas implementaciones. Casos de uso aceptan filtros opcionales sin modificar la clase base. Repositorios mock completamente intercambiables. |
 | **LSP** (Sustitución de Liskov) | ✅ 10/10 | Repositorios mock 100% sustituibles por implementaciones reales. Ambos cumplen el contrato completo de su interfaz. |
 | **ISP** (Segregación de Interfaces) | ✅ 10/10 | Interfaces pequeñas y focalizadas: 1-3 métodos cada una. |
-| **DIP** (Inversión de Dependencias) | ⚠️ 7/10 | **Bien**: Casos de uso dependen de abstracciones (inyectadas por constructor). **Mal**: Composables y servicios de presentación importan directamente `serviceLocator` desde infraestructura. |
-
-### Violaciones conocidas de DIP
-
-Cuatro archivos en presentación importan desde infraestructura, rompiendo la regla de dependencia:
-
-| Archivo | Importación |
-|---------|-------------|
-| `use-dashboard.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
-| `use-historial.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
-| `use-clients.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
-| `report.service.ts` | `serviceLocator` desde `infrastructure/di/` |
-
-**Nota**: Esta es una decisión pragmática para evitar la complejidad de inyectar casos de uso en cada vista. Una solución futura sería usar `provide/inject` de Vue o un patrón de fábrica.
+| **DIP** (Inversión de Dependencias) | ✅ 10/10 | Casos de uso reciben repositorios por constructor (abstractos). Composables reciben casos de uso vía `inject` (Vue DI). Ningún archivo de presentación importa `serviceLocator`. Solo `App.vue` (composition root) conoce la implementación concreta. |
 
 ---
 
@@ -113,7 +103,7 @@ npm run build
 - **Vue 3** + Composition API + `<script setup>`
 - **TypeScript** — tipado estricto
 - **Vite** — build tool
-- **Tailwind CSS 3** — diseño atómico con tokens Material Design 3
+- **Tailwind CSS v4** — diseño atómico con tokens Material Design 3 (sin PostCSS, vía `@tailwindcss/vite`)
 - **Vue Router** — SPA routing con lazy loading
 - **jsPDF** + **jspdf-autotable** — generación de reportes PDF
 - **html2canvas** — captura de gráficos para PDF

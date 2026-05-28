@@ -1,12 +1,137 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* ────────────── Design Tokens ────────────── */
+
+@theme {
+  /* Colors — Material Design 3 palette */
+  --color-on-tertiary-container: #008cc7;
+  --color-inverse-surface: #2d3133;
+  --color-on-primary: #ffffff;
+  --color-surface-dim: #d8dadc;
+  --color-secondary-fixed-dim: #b9c7e0;
+  --color-inverse-on-surface: #eff1f3;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-surface-variant: #45464d;
+  --color-surface-variant: #e0e3e5;
+  --color-inverse-primary: #bec6e0;
+  --color-on-surface: #191c1e;
+  --color-error: #ba1a1a;
+  --color-tertiary-fixed: #c9e6ff;
+  --color-on-background: #191c1e;
+  --color-on-primary-fixed: #131b2e;
+  --color-error-container: #ffdad6;
+  --color-surface-container: #eceef0;
+  --color-outline-variant: #c6c6cd;
+  --color-on-error-container: #93000a;
+  --color-on-tertiary-fixed: #001e2f;
+  --color-tertiary-container: #001e2f;
+  --color-tertiary: #000000;
+  --color-on-tertiary-fixed-variant: #004c6e;
+  --color-primary: #000000;
+  --color-on-primary-fixed-variant: #3f465c;
+  --color-surface: #f7f9fb;
+  --color-background: #f7f9fb;
+  --color-surface-tint: #565e74;
+  --color-secondary-container: #d5e3fd;
+  --color-surface-container-lowest: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-secondary-fixed: #0d1c2f;
+  --color-secondary-fixed: #d5e3fd;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-bright: #f7f9fb;
+  --color-secondary: #515f74;
+  --color-on-primary-container: #7c839b;
+  --color-on-secondary-fixed-variant: #3a485c;
+  --color-primary-fixed: #dae2fd;
+  --color-on-secondary: #ffffff;
+  --color-tertiary-fixed-dim: #89ceff;
+  --color-surface-container-high: #e6e8ea;
+  --color-surface-container-highest: #e0e3e5;
+  --color-outline: #76777d;
+  --color-on-secondary-container: #57657b;
+  --color-on-error: #ffffff;
+  --color-on-tertiary: #ffffff;
+
+  /* Border Radius */
+  --radius-default: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+
+  /* Spacing */
+  --spacing-container-margin: 2rem;
+  --spacing-xs: 0.25rem;
+  --spacing-base: 4px;
+  --spacing-lg: 1.5rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Font Families */
+  --font-family-body-md: Inter, sans-serif;
+  --font-family-table-data: Inter, sans-serif;
+  --font-family-display-lg: Inter, sans-serif;
+  --font-family-headline-sm: Inter, sans-serif;
+  --font-family-headline-md: Inter, sans-serif;
+  --font-family-label-md: Inter, sans-serif;
+  --font-family-label-sm: Inter, sans-serif;
+  --font-family-body-lg: Inter, sans-serif;
+  --font-family-body-sm: Inter, sans-serif;
+
+  /* Font Sizes */
+  --font-size-body-md: 14px;
+  --font-size-body-md--line-height: 20px;
+  --font-size-body-md--font-weight: 400;
+
+  --font-size-table-data: 14px;
+  --font-size-table-data--line-height: 20px;
+  --font-size-table-data--font-weight: 400;
+
+  --font-size-display-lg: 36px;
+  --font-size-display-lg--line-height: 44px;
+  --font-size-display-lg--letter-spacing: -0.02em;
+  --font-size-display-lg--font-weight: 700;
+
+  --font-size-headline-sm: 20px;
+  --font-size-headline-sm--line-height: 28px;
+  --font-size-headline-sm--font-weight: 600;
+
+  --font-size-headline-md: 24px;
+  --font-size-headline-md--line-height: 32px;
+  --font-size-headline-md--letter-spacing: -0.01em;
+  --font-size-headline-md--font-weight: 600;
+
+  --font-size-label-md: 13px;
+  --font-size-label-md--line-height: 16px;
+  --font-size-label-md--letter-spacing: 0.05em;
+  --font-size-label-md--font-weight: 600;
+
+  --font-size-label-sm: 11px;
+  --font-size-label-sm--line-height: 16px;
+  --font-size-label-sm--letter-spacing: 0.05em;
+  --font-size-label-sm--font-weight: 600;
+
+  --font-size-body-lg: 16px;
+  --font-size-body-lg--line-height: 24px;
+  --font-size-body-lg--font-weight: 400;
+
+  --font-size-body-sm: 12px;
+  --font-size-body-sm--line-height: 18px;
+  --font-size-body-sm--font-weight: 400;
+}
+
+/* ────────────── Base Styles ────────────── */
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family-body-md);
   }
 }
+
+/* ────────────── Component Styles ────────────── */
 
 @layer components {
   .glass-card {
