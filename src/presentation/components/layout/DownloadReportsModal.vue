@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useReportModal } from '@/presentation/composables/use-report-modal.composable'
+import {
+  GET_CLIENTS_USE_CASE,
+  GET_HISTORIAL_USE_CASE,
+  GET_DASHBOARD_DATA_USE_CASE,
+} from '@/presentation/di-keys'
 import { downloadReport, type ReportSection } from '@/presentation/services/report.service'
 
 const { isOpen, close } = useReportModal()
+
+// Casos de uso inyectados desde App.vue — DIP respetado
+const getDashboardData = inject(GET_DASHBOARD_DATA_USE_CASE)!
+const getClients = inject(GET_CLIENTS_USE_CASE)!
+const getHistorial = inject(GET_HISTORIAL_USE_CASE)!
 
 interface CheckItem {
   key: ReportSection
@@ -39,7 +49,7 @@ async function handleDownload(): Promise<void> {
 
   downloading.value = true
   try {
-    await downloadReport(selected)
+    await downloadReport(selected, { getDashboardData, getClients, getHistorial })
   } catch (err) {
     console.error('Error al descargar reporte:', err)
   } finally {

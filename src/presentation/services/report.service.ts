@@ -1,9 +1,18 @@
 import jsPDF from 'jspdf'
 import { autoTable } from 'jspdf-autotable'
-import { serviceLocator } from '@/infrastructure/di/service-locator'
+import type { GetDashboardDataUseCase } from '@/application/use-cases/get-dashboard-data.use-case'
+import type { GetClientsUseCase } from '@/application/use-cases/get-clients.use-case'
+import type { GetHistorialUseCase } from '@/application/use-cases/get-historial.use-case'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
 import type { DashboardDataEntity } from '@/domain/entities/dashboard.entity'
+
+/** Casos de uso que necesita el servicio de reportes */
+export interface ReportUseCases {
+  getDashboardData: GetDashboardDataUseCase
+  getClients: GetClientsUseCase
+  getHistorial: GetHistorialUseCase
+}
 
 export type ReportSection =
   | 'total_llamadas'
@@ -32,12 +41,17 @@ interface PrefetchedData {
  *
  * Primero obtiene TODOS los datos de las APIs (una sola vez cada una),
  * luego construye el PDF en memoria sin más llamadas de red.
+ *
+ * Principio DIP — recibe los casos de uso por inyección, no los busca en infraestructura.
  */
-export async function downloadReport(sections: ReportSection[]): Promise<void> {
+export async function downloadReport(
+  sections: ReportSection[],
+  useCases: ReportUseCases,
+): Promise<void> {
   if (sections.length === 0) return
 
   // ── 1. Precargar datos de todas las APIs necesarias ──
-  const data = await prefetchData(sections)
+  const data = await prefetchData(sections, useCases)
 
   // ── 2. Construir PDF ──
   const doc = new jsPDF('p', 'mm', 'letter')
@@ -103,7 +117,10 @@ export async function downloadReport(sections: ReportSection[]): Promise<void> {
 
 // ────────────── Precarga ──────────────
 
-async function prefetchData(sections: ReportSection[]): Promise<PrefetchedData> {
+async function prefetchData(
+  sections: ReportSection[],
+  useCases: ReportUseCases,
+): Promise<PrefetchedData> {
   const needsDashboard =
     sections.includes('total_llamadas') ||
     sections.includes('costos_totales') ||
@@ -113,9 +130,9 @@ async function prefetchData(sections: ReportSection[]): Promise<PrefetchedData> 
 
   // Disparamos todas las fetch en paralelo
   const [dashboardResult, clientsResult, historialResult] = await Promise.all([
-    needsDashboard ? safeFetch(() => serviceLocator.getDashboardData().execute()) : Promise.resolve(null),
-    needsClients ? safeFetch(() => serviceLocator.getClients().execute()) : Promise.resolve([] as ClientEntity[]),
-    needsHistorial ? safeFetch(() => serviceLocator.getHistorial().execute()) : Promise.resolve([] as HistorialEntryEntity[]),
+    needsDashboard ? safeFetch(() => useCases.getDashboardData.execute()) : Promise.resolve(null),
+    needsClients ? safeFetch(() => useCases.getClients.execute()) : Promise.resolve([] as ClientEntity[]),
+    needsHistorial ? safeFetch(() => useCases.getHistorial.execute()) : Promise.resolve([] as HistorialEntryEntity[]),
   ])
 
   return {

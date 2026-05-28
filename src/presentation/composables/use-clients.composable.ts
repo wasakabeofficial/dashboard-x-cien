@@ -1,18 +1,22 @@
-import { ref, computed, onMounted } from 'vue'
-import { serviceLocator } from '@/infrastructure/di/service-locator'
+import { ref, computed, inject, onMounted } from 'vue'
+import { GET_CLIENTS_USE_CASE } from '@/presentation/di-keys'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 
 /**
  * Composable: Gestión de clientes en la UI.
  *
  * Responsabilidad única: exponer estado reactivo de clientes para la capa de presentación.
- * Principio DIP — no depende de implementaciones concretas, sino del caso de uso abstracto.
+ * Principio DIP — recibe el caso de uso por inyección de dependencias (Vue provide/inject),
+ *               no lo busca en infraestructura.
  */
 export function useClients(pageSize = 4) {
   const clients = ref<ClientEntity[]>([])
   const loading = ref(false)
   const currentPage = ref(1)
   const searchQuery = ref('')
+
+  // Inyectado desde App.vue — Clean Architecture DIP respetado
+  const getClients = inject(GET_CLIENTS_USE_CASE)!
 
   const totalRecords = computed(() => clients.value.length)
 
@@ -26,8 +30,7 @@ export function useClients(pageSize = 4) {
   async function loadClients(): Promise<void> {
     loading.value = true
     try {
-      const useCase = serviceLocator.getClients()
-      clients.value = await useCase.execute()
+      clients.value = await getClients.execute()
     } finally {
       loading.value = false
     }
@@ -41,8 +44,7 @@ export function useClients(pageSize = 4) {
     }
     loading.value = true
     try {
-      const useCase = serviceLocator.getClients()
-      clients.value = await useCase.search(query)
+      clients.value = await getClients.search(query)
     } finally {
       loading.value = false
     }
@@ -59,8 +61,7 @@ export function useClients(pageSize = 4) {
    * Obtiene un cliente por su ID (para la vista de detalle).
    */
   async function getClientById(id: string): Promise<ClientEntity | null> {
-    const useCase = serviceLocator.getClients()
-    return useCase.getById(id)
+    return getClients.getById(id)
   }
 
   onMounted(loadClients)

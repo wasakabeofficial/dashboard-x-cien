@@ -1,12 +1,22 @@
-import { ref, computed, onMounted } from 'vue'
-import { serviceLocator } from '@/infrastructure/di/service-locator'
+import { ref, computed, inject, onMounted } from 'vue'
+import { GET_HISTORIAL_USE_CASE } from '@/presentation/di-keys'
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
 
+/**
+ * Composable: Gestión del historial de incidencias.
+ *
+ * Responsabilidad única: exponer estado reactivo del historial.
+ * Principio DIP — recibe el caso de uso por inyección de dependencias (Vue provide/inject),
+ *               no lo busca en infraestructura.
+ */
 export function useHistorial() {
   const allEntries = ref<HistorialEntryEntity[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const searchQuery = ref('')
+
+  // Inyectado desde App.vue — Clean Architecture DIP respetado
+  const getHistorial = inject(GET_HISTORIAL_USE_CASE)!
 
   const entries = computed(() => {
     if (!searchQuery.value.trim()) return allEntries.value
@@ -26,8 +36,7 @@ export function useHistorial() {
     loading.value = true
     error.value = null
     try {
-      const useCase = serviceLocator.getHistorial()
-      allEntries.value = await useCase.execute()
+      allEntries.value = await getHistorial.execute()
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Error al cargar historial'
     } finally {
@@ -36,8 +45,7 @@ export function useHistorial() {
   }
 
   async function getEntryByFolio(folio: string): Promise<HistorialEntryEntity | null> {
-    const useCase = serviceLocator.getHistorial()
-    return useCase.getByFolio(folio)
+    return getHistorial.getByFolio(folio)
   }
 
   async function searchHistorial(query: string): Promise<void> {
@@ -48,8 +56,7 @@ export function useHistorial() {
     }
     loading.value = true
     try {
-      const useCase = serviceLocator.getHistorial()
-      allEntries.value = await useCase.search(query)
+      allEntries.value = await getHistorial.search(query)
     } finally {
       loading.value = false
     }

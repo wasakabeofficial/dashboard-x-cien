@@ -1,5 +1,5 @@
-import { ref, watch, onMounted } from 'vue'
-import { serviceLocator } from '@/infrastructure/di/service-locator'
+import { ref, watch, inject, onMounted } from 'vue'
+import { GET_DASHBOARD_DATA_USE_CASE } from '@/presentation/di-keys'
 import type { DashboardDataEntity, DashboardFilter } from '@/domain/entities/dashboard.entity'
 
 export type PeriodFilter = 'all' | '7d' | '30d' | '90d'
@@ -8,13 +8,17 @@ export type PeriodFilter = 'all' | '7d' | '30d' | '90d'
  * Composable: Gestión de datos del dashboard.
  *
  * Responsabilidad única: exponer estado reactivo del dashboard.
- * Principio DIP — se apoya en el caso de uso, no en implementaciones concretas.
+ * Principio DIP — recibe el caso de uso por inyección de dependencias (Vue provide/inject),
+ *               no lo busca en infraestructura.
  * Principio OCP — los filtros se añaden sin modificar el composable base.
  */
 export function useDashboard() {
   const data = ref<DashboardDataEntity | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  // Inyectado desde App.vue — Clean Architecture DIP respetado
+  const getDashboardData = inject(GET_DASHBOARD_DATA_USE_CASE)!
 
   // Estado de filtros
   const periodFilter = ref<PeriodFilter>('all')
@@ -36,8 +40,7 @@ export function useDashboard() {
     loading.value = true
     error.value = null
     try {
-      const useCase = serviceLocator.getDashboardData()
-      data.value = await useCase.execute(buildFilter())
+      data.value = await getDashboardData.execute(buildFilter())
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Error al cargar datos del dashboard'
     } finally {
