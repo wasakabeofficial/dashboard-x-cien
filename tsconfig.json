@@ -3,6 +3,12 @@
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "vite.config.*"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    // Silence deprecation warnings for TS < 7 options (baseUrl, etc.)
+    "ignoreDeprecations": "6.0",
+
+    // Base URL required for paths alias resolution in VS Code
+    "baseUrl": ".",
+
     // Extra safety for array and object lookups, but may have false positives.
     "noUncheckedIndexedAccess": true,
 

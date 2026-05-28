@@ -36,7 +36,7 @@ const { isOpen, close } = useSidebar()
   </Teleport>
 
   <!-- Main Content Wrapper -->
-  <main class="min-h-screen flex flex-col lg:ml-[280px]">
+  <main class="min-h-screen flex flex-col lg:ml-70">
     <AppTopNav />
 
     <!-- Page Content (router outlet) -->
