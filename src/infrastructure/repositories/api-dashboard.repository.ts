@@ -194,14 +194,6 @@ export class ApiDashboardRepository implements DashboardRepository {
 
     return [
       {
-        type: 'campaign',
-        title: 'Análisis de Incidencias',
-        description:
-          `Se registraron ${records.length} llamadas en total. ` +
-          `${sinSoporte} de ellas (${pctSinSoporte}%) requieren soporte adicional.`,
-        actionLabel: 'Ver Detalle',
-      },
-      {
         type: 'alert',
         title: 'Alertas de Calidad',
         description:

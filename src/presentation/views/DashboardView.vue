@@ -159,31 +159,6 @@ function hasActiveFilters(): boolean {
 
         <!-- Actionable Insights -->
         <div class="lg:col-span-12 xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-md">
-          <!-- Campaign Optimization -->
-          <div
-            v-for="insight in dashboardData.insights.filter((i) => i.type === 'campaign')"
-            :key="insight.type"
-            class="bg-primary-container p-xl rounded-xl text-on-primary-container relative overflow-hidden group"
-          >
-            <div class="relative z-10">
-              <h4 class="font-headline-sm text-headline-sm text-white mb-md">
-                {{ insight.title }}
-              </h4>
-              <p class="font-body-md text-white/80 mb-xl">
-                {{ insight.description }}
-              </p>
-              <button
-                class="bg-white text-primary px-md py-sm rounded-lg font-label-md flex items-center gap-sm"
-              >
-                {{ insight.actionLabel }}
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-              </button>
-            </div>
-            <div
-              class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"
-            ></div>
-          </div>
-
           <!-- Quality Alerts -->
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'alert')"
