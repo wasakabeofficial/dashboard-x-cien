@@ -1,48 +1,150 @@
-# dashboard-x-cien
+# Dashboard XCien
 
-This template should help get you started developing with Vue 3 in Vite.
+Panel operativo para gestión de clientes, historial de incidencias y monitoreo de llamadas. Construido con **Vue 3 + TypeScript + Vite + Tailwind CSS** bajo los principios de **Clean Architecture** y **SOLID**.
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Arquitectura
 
-## Recommended Browser Setup
+El proyecto sigue **Clean Architecture** en 4 capas con dependencias estrictamente unidireccionales hacia el centro:
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+```
+src/
+├── domain/          (núcleo — no depende de nada)
+│   ├── entities/     → interfaces de datos de negocio
+│   └── repositories/ → contratos abstractos (puertos)
+├── application/     (casos de uso — solo depende de domain)
+│   └── use-cases/    → orquestación de operaciones de negocio
+├── infrastructure/  (implementaciones — depende de domain + application)
+│   ├── repositories/ → implementaciones concretas (API, mock)
+│   └── di/           → service locator (composición de dependencias)
+└── presentation/    (UI — depende de domain + application + infrastructure)
+    ├── composables/  → estado reactivo Vue
+    ├── views/        → páginas Vue
+    ├── components/   → componentes UI reutilizables
+    ├── router/       → navegación
+    └── services/     → utilidades de presentación (PDF)
+```
 
-## Type Support for `.vue` Imports in TS
+### Regla de dependencias
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```
+domain/ ──→ (ninguna)
+   ↑
+application/ ──→ domain/ únicamente ✅
+   ↑
+infrastructure/ ──→ domain/ + application/ ✅
+   ↑
+presentation/ ──→ cualquier capa interior
+```
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## Principios SOLID — Estado actual
 
-## Project Setup
+| Principio | Estado | Detalle |
+|-----------|--------|---------|
+| **SRP** (Responsabilidad Única) | ✅ 9/10 | Entidades, interfaces, casos de uso y componentes tienen una responsabilidad clara. `ApiDashboardRepository` (~200 líneas) combina fetch, filtros, KPIs e insights — posible mejora de extracción. |
+| **OCP** (Abierto/Cerrado) | ✅ 8/10 | Interfaces permiten nuevas implementaciones. Casos de uso aceptan filtros opcionales sin modificar la clase base. |
+| **LSP** (Sustitución de Liskov) | ✅ 10/10 | Repositorios mock 100% sustituibles por implementaciones reales. Ambos cumplen el contrato completo de su interfaz. |
+| **ISP** (Segregación de Interfaces) | ✅ 10/10 | Interfaces pequeñas y focalizadas: 1-3 métodos cada una. |
+| **DIP** (Inversión de Dependencias) | ⚠️ 7/10 | **Bien**: Casos de uso dependen de abstracciones (inyectadas por constructor). **Mal**: Composables y servicios de presentación importan directamente `serviceLocator` desde infraestructura. |
 
-```sh
+### Violaciones conocidas de DIP
+
+Cuatro archivos en presentación importan desde infraestructura, rompiendo la regla de dependencia:
+
+| Archivo | Importación |
+|---------|-------------|
+| `use-dashboard.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
+| `use-historial.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
+| `use-clients.composable.ts` | `serviceLocator` desde `infrastructure/di/` |
+| `report.service.ts` | `serviceLocator` desde `infrastructure/di/` |
+
+**Nota**: Esta es una decisión pragmática para evitar la complejidad de inyectar casos de uso en cada vista. Una solución futura sería usar `provide/inject` de Vue o un patrón de fábrica.
+
+---
+
+## Funcionalidades
+
+- **Dashboard operativo** — KPIs (total llamadas, costo, duración promedio), gráfico de distribución por categoría, tasa de éxito, insights
+- **Gestión de Clientes** — tabla paginada con búsqueda por API, vista de detalle
+- **Historial de Incidencias** — tabla con búsqueda client-side (folio, titular, categoría, estado), vista de detalle
+- **Búsqueda global** — barra de búsqueda en el TopNav con debounce que filtra la vista activa
+- **Filtros del Dashboard** — panel desplegable con filtros por período (7/30/90 días) y categoría (resuelto, en proceso, soporte insuficiente)
+- **Reportes PDF** — descarga de reportes con jsPDF + autoTable (página 1: KPIs, página 2: Clientes, página 3: Historial)
+- **Diseño responsivo** — sidebar overlay en móvil, tablas con scroll horizontal, grid adaptable
+- **Sin autenticación** — todas las operaciones son GET, sin crear/editar/eliminar
+
+---
+
+## Variables de Entorno
+
+Copia `.env.example` como `.env` y completa las URLs de las API:
+
+```env
+VITE_API_CLIENTS_URL=https://tu-api.com/getContactosVue
+VITE_API_HISTORIAL_URL=https://tu-api.com/getHistorialVue
+VITE_API_TABLA_URL=https://tu-api.com/getTablaVue
+```
+
+---
+
+## Instalación y Uso
+
+```bash
+# Instalar dependencias
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
+# Desarrollo con hot-reload
 npm run dev
-```
 
-### Type-Check, Compile and Minify for Production
+# Type-check
+npx vue-tsc --noEmit
 
-```sh
+# Build producción
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+---
 
-```sh
-npm run lint
+## Tecnologías
+
+- **Vue 3** + Composition API + `<script setup>`
+- **TypeScript** — tipado estricto
+- **Vite** — build tool
+- **Tailwind CSS 3** — diseño atómico con tokens Material Design 3
+- **Vue Router** — SPA routing con lazy loading
+- **jsPDF** + **jspdf-autotable** — generación de reportes PDF
+- **html2canvas** — captura de gráficos para PDF
+
+---
+
+## Estructura de Componentes
+
 ```
+App.vue
+├── AppSidebar        → navegación responsiva (overlay móvil / fijo desktop)
+├── AppTopNav         → hamburguesa + búsqueda global + acciones
+└── <router-view>
+    ├── DashboardView     → KPIs, gráfico, insights, filtros
+    ├── ClientesView      → tabla de clientes con paginación
+    │   └── ClientTable   → reutiliza AppTableContainer
+    ├── HistorialView     → tabla de incidencias
+    │   └── HistorialTable → reutiliza AppTableContainer
+    ├── ClientDetailView  → detalle de un cliente
+    ├── HistorialDetailView → detalle de una incidencia
+    └── SettingsView      → placeholder
+```
+
+Componentes compartidos:
+- `AppTableContainer` — tabla con slot para columnas/filas, loading, empty, paginación
+- `AppCard` — contenedor tipo card con padding responsivo
+- `KpiCard` — indicador KPI
+- `DistributionChart` — gráfico de distribución con barras de progreso
+
+---
+
+## Licencia
+
+MIT
