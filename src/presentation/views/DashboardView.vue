@@ -1,39 +1,13 @@
 <script setup lang="ts">
 import { useDashboard } from '@/presentation/composables/use-dashboard.composable'
-import { useClients } from '@/presentation/composables/use-clients.composable'
-import { watch } from 'vue'
 import KpiCard from '@/presentation/components/dashboard/KpiCard.vue'
 import DistributionChart from '@/presentation/components/dashboard/DistributionChart.vue'
-import ClientTable from '@/presentation/components/dashboard/ClientTable.vue'
-import AppTopNav from '@/presentation/components/layout/AppTopNav.vue'
 
 const {
   data: dashboardData,
   loading: dashboardLoading,
   error: dashboardError,
 } = useDashboard()
-
-const {
-  paginatedClients,
-  currentPage,
-  totalPages,
-  totalRecords,
-  loading: clientsLoading,
-  searchClients,
-  goToPage,
-} = useClients()
-
-function handleSearch(query: string): void {
-  searchClients(query)
-}
-
-// Escuchar búsqueda desde el TopNav
-watch(
-  () => dashboardData.value,
-  () => {
-    // Datos cargados — los composables ya manejan su estado internamente
-  },
-)
 </script>
 
 <template>
@@ -86,7 +60,7 @@ watch(
         <KpiCard v-for="kpi in dashboardData.kpis" :key="kpi.title" :data="kpi" />
       </section>
 
-      <!-- Middle Section: Charts & Insights -->
+      <!-- Charts & Insights -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
         <!-- Distribution Chart -->
         <div class="lg:col-span-4">
@@ -180,16 +154,6 @@ watch(
           </div>
         </div>
       </section>
-
-      <!-- Data Table -->
-      <ClientTable
-        :clients="paginatedClients"
-        :current-page="currentPage"
-        :total-pages="totalPages"
-        :page-size="4"
-        :total-records="totalRecords"
-        @go-to-page="goToPage"
-      />
     </template>
   </div>
 </template>

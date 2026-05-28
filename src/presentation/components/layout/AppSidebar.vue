@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
 
 interface NavItem {
   label: string
   icon: string
-  href: string
+  routeName: string
 }
 
-const navItems = ref<NavItem[]>([
-  { label: 'Dashboard', icon: 'dashboard', href: '#' },
-  { label: 'Analytics', icon: 'monitoring', href: '#' },
-  { label: 'Operations', icon: 'settings_suggest', href: '#' },
-  { label: 'Inventory', icon: 'inventory_2', href: '#' },
-  { label: 'Settings', icon: 'settings', href: '#' },
-])
+const navItems: NavItem[] = [
+  { label: 'Dashboard', icon: 'dashboard', routeName: 'dashboard' },
+  { label: 'Gestión de Clientes', icon: 'groups', routeName: 'clientes' },
+  { label: 'Historial', icon: 'history', routeName: 'historial' },
+  { label: 'Settings', icon: 'settings', routeName: 'settings' },
+]
 
-const activeIndex = ref(0)
+const route = useRoute()
+const router = useRouter()
 
-function setActive(index: number): void {
-  activeIndex.value = index
+const activeRouteName = computed(() => route.name as string)
+
+function isActive(item: NavItem): boolean {
+  return activeRouteName.value === item.routeName
+}
+
+function navigate(item: NavItem): void {
+  router.push({ name: item.routeName })
 }
 </script>
 
@@ -34,21 +41,20 @@ function setActive(index: number): void {
 
     <!-- Navigation -->
     <nav class="flex-1 space-y-1">
-      <a
-        v-for="(item, index) in navItems"
-        :key="item.label"
-        :href="item.href"
-        class="flex items-center px-xl py-md transition-all duration-200"
+      <button
+        v-for="item in navItems"
+        :key="item.routeName"
+        class="w-full flex items-center px-xl py-md transition-all duration-200 text-left"
         :class="
-          activeIndex === index
+          isActive(item)
             ? 'text-primary font-bold bg-secondary-container/50 border-r-4 border-primary opacity-90'
             : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
         "
-        @click.prevent="setActive(index)"
+        @click="navigate(item)"
       >
         <span class="material-symbols-outlined mr-md">{{ item.icon }}</span>
         <span class="font-label-md text-label-md">{{ item.label }}</span>
-      </a>
+      </button>
     </nav>
 
     <!-- Bottom actions -->
@@ -59,20 +65,18 @@ function setActive(index: number): void {
         Descargar Reportes
       </button>
       <div class="space-y-1">
-        <a
-          class="flex items-center text-on-surface-variant hover:text-on-surface py-2"
-          href="#"
+        <button
+          class="w-full flex items-center text-on-surface-variant hover:text-on-surface py-2 text-left"
         >
           <span class="material-symbols-outlined mr-md">help</span>
           <span class="font-label-md text-label-md">Soporte</span>
-        </a>
-        <a
-          class="flex items-center text-on-surface-variant hover:text-on-surface py-2"
-          href="#"
+        </button>
+        <button
+          class="w-full flex items-center text-on-surface-variant hover:text-on-surface py-2 text-left"
         >
           <span class="material-symbols-outlined mr-md">logout</span>
           <span class="font-label-md text-label-md">Cerrar Sesión</span>
-        </a>
+        </button>
       </div>
     </div>
   </aside>
