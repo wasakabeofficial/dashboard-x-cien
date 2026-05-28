@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { KpiEntity } from '@/domain/entities/dashboard.entity'
+import AppCard from '@/presentation/components/shared/AppCard.vue'
 
 defineProps<{
   data: KpiEntity
@@ -7,8 +8,8 @@ defineProps<{
 </script>
 
 <template>
-  <div
-    class="bg-surface-container-lowest p-xl rounded-xl border border-outline-variant shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-md transition-shadow group"
+  <AppCard
+    class="shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-md transition-shadow group"
   >
     <!-- Header: icon + trend -->
     <div class="flex justify-between items-start mb-md">
@@ -34,5 +35,5 @@ defineProps<{
     <p class="text-on-surface-variant font-label-md text-label-md">{{ data.title }}</p>
     <h3 class="font-display-lg text-display-lg text-primary mt-xs">{{ data.value }}</h3>
     <p class="text-on-surface-variant font-body-sm text-body-sm mt-sm">{{ data.subtitle }}</p>
-  </div>
+  </AppCard>
 </template>
