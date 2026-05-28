@@ -232,7 +232,7 @@ function addGestionClientes(doc: jsPDF, y: number, clients: ClientEntity[]): num
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).getLastAutoTable()?.finalY ?? y + 10
+  return (doc as any).lastAutoTable?.finalY ?? y + 10
 }
 
 function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]): number {
@@ -245,5 +245,5 @@ function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]):
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).getLastAutoTable()?.finalY ?? y + 10
+  return (doc as any).lastAutoTable?.finalY ?? y + 10
 }
