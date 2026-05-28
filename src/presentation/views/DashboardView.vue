@@ -38,47 +38,44 @@ function hasActiveFilters(): boolean {
 </script>
 
 <template>
-  <div class="p-md lg:p-xl space-y-xl">
-    <!-- Page Header -->
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-md">
+  <div class="p-md lg:p-lg space-y-lg bg-surface min-h-screen">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-sm">
       <div>
-        <h2 class="font-headline-md text-headline-md text-primary">Panel Operativo</h2>
-        <p class="text-on-surface-variant font-body-md text-body-md">
+        <h2 class="font-headline-md text-headline-md text-primary tracking-tight">Panel Operativo</h2>
+        <p class="text-on-surface-variant/70 font-body-md text-body-md mt-xs">
           Bienvenido de nuevo, Administrador. Aquí está el resumen de hoy.
         </p>
       </div>
       <div class="flex gap-md shrink-0">
         <div class="relative">
           <button
-            class="px-md py-sm bg-surface-container-lowest border border-outline text-secondary font-label-md rounded-lg flex items-center gap-xs hover:bg-surface-container-low transition-all"
-            :class="{ 'ring-2 ring-primary/40': hasActiveFilters() }"
+            class="px-md py-sm bg-surface-container-lowest border border-outline-variant/60 text-secondary font-label-md rounded-xl flex items-center gap-xs hover:bg-surface-container-low hover:border-outline transition-all shadow-sm"
+            :class="{ 'ring-2 ring-primary/40 border-primary/40': hasActiveFilters() }"
             @click="showFilters = !showFilters"
           >
             <span class="material-symbols-outlined text-[18px]">filter_list</span>
             Filtros
             <span
               v-if="hasActiveFilters()"
-              class="w-2 h-2 rounded-full bg-primary ml-xs"
+              class="w-2 h-2 rounded-full bg-primary ml-xs animate-pulse"
             ></span>
           </button>
 
-          <!-- Filter Panel Dropdown -->
           <div
             v-if="showFilters"
-            class="absolute right-0 top-full mt-sm w-72 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg p-lg z-30"
+            class="absolute right-0 top-full mt-sm w-80 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] p-lg z-30 backdrop-blur-xl"
           >
             <div class="space-y-lg">
-              <!-- Período -->
               <div>
                 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-sm">Período</label>
                 <div class="flex flex-wrap gap-xs">
                   <button
                     v-for="opt in periodOptions"
                     :key="opt.value"
-                    class="px-sm py-xs rounded-full border text-body-sm transition-all"
+                    class="px-sm py-xs rounded-lg border text-body-sm transition-all"
                     :class="periodFilter === opt.value
-                      ? 'bg-primary text-on-primary border-primary'
-                      : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container'"
+                      ? 'bg-primary text-on-primary border-primary shadow-sm'
+                      : 'bg-surface-container-low/60 text-on-surface-variant border-outline-variant/40 hover:bg-surface-container'"
                     @click="setPeriodFilter(opt.value)"
                   >
                     {{ opt.label }}
@@ -86,17 +83,16 @@ function hasActiveFilters(): boolean {
                 </div>
               </div>
 
-              <!-- Categoría -->
               <div>
                 <label class="font-label-sm text-label-sm text-on-surface-variant block mb-sm">Categoría</label>
                 <div class="flex flex-wrap gap-xs">
                   <button
                     v-for="opt in validationTagOptions"
                     :key="opt.value"
-                    class="px-sm py-xs rounded-full border text-body-sm transition-all"
+                    class="px-sm py-xs rounded-lg border text-body-sm transition-all"
                     :class="validationTagFilter === opt.value
-                      ? 'bg-primary text-on-primary border-primary'
-                      : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container'"
+                      ? 'bg-primary text-on-primary border-primary shadow-sm'
+                      : 'bg-surface-container-low/60 text-on-surface-variant border-outline-variant/40 hover:bg-surface-container'"
                     @click="setValidationTagFilter(opt.value)"
                   >
                     {{ opt.label }}
@@ -104,8 +100,7 @@ function hasActiveFilters(): boolean {
                 </div>
               </div>
 
-              <!-- Acciones -->
-              <div class="flex justify-between items-center pt-sm border-t border-outline-variant">
+              <div class="flex justify-between items-center pt-sm border-t border-outline-variant/40">
                 <span v-if="hasActiveFilters()" class="text-body-sm text-on-surface-variant">
                   Filtros activos
                 </span>
@@ -123,7 +118,6 @@ function hasActiveFilters(): boolean {
       </div>
     </div>
 
-    <!-- Loading State -->
     <div
       v-if="dashboardLoading"
       class="flex items-center justify-center py-12 text-on-surface-variant"
@@ -132,24 +126,19 @@ function hasActiveFilters(): boolean {
       Cargando datos del dashboard...
     </div>
 
-    <!-- Error State -->
     <div
       v-else-if="dashboardError"
-      class="bg-error-container text-on-error-container p-xl rounded-xl"
+      class="bg-error-container text-on-error-container p-xl rounded-2xl"
     >
       {{ dashboardError }}
     </div>
 
-    <!-- Dashboard Content -->
     <template v-if="dashboardData && !dashboardLoading">
-      <!-- KPI Cards -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md lg:gap-xl">
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
         <KpiCard v-for="kpi in dashboardData.kpis" :key="kpi.title" :data="kpi" />
       </section>
 
-      <!-- Charts & Insights -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-md lg:gap-xl">
-        <!-- Distribution Chart -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-md">
         <div class="lg:col-span-12 xl:col-span-4">
           <DistributionChart
             :items="dashboardData.distribution"
@@ -157,26 +146,24 @@ function hasActiveFilters(): boolean {
           />
         </div>
 
-        <!-- Actionable Insights -->
         <div class="lg:col-span-12 xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-md">
-          <!-- Quality Alerts -->
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'alert')"
             :key="insight.type"
-            class="bg-surface-container-highest p-xl rounded-xl border border-outline-variant flex flex-col justify-between"
+            class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant/40 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300"
           >
             <div>
-              <h4 class="font-headline-sm text-headline-sm text-primary mb-xs">
+              <h4 class="font-headline-sm text-headline-sm text-primary mb-xs tracking-tight">
                 {{ insight.title }}
               </h4>
-              <p class="font-body-sm text-on-surface-variant">
+              <p class="font-body-sm text-on-surface-variant/80 leading-relaxed">
                 {{ insight.description }}
               </p>
             </div>
-            <div v-if="insight.teamMembers" class="flex items-center gap-md mt-md">
+            <div v-if="insight.teamMembers" class="flex items-center gap-md mt-sm">
               <div class="flex -space-x-2">
                 <div
-                  class="w-8 h-8 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center overflow-hidden"
+                  class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-variant flex items-center justify-center overflow-hidden shadow-sm"
                 >
                   <img
                     alt="Team 1"
@@ -184,7 +171,7 @@ function hasActiveFilters(): boolean {
                   />
                 </div>
                 <div
-                  class="w-8 h-8 rounded-full border-2 border-surface bg-surface-variant flex items-center justify-center overflow-hidden"
+                  class="w-8 h-8 rounded-full border-2 border-surface-container-lowest bg-surface-variant flex items-center justify-center overflow-hidden shadow-sm"
                 >
                   <img
                     alt="Team 2"
@@ -192,25 +179,24 @@ function hasActiveFilters(): boolean {
                   />
                 </div>
               </div>
-              <span class="text-body-sm text-on-surface-variant">Revisado por IT</span>
+              <span class="text-body-sm text-on-surface-variant/70">Revisado por IT</span>
             </div>
           </div>
 
-          <!-- AI Suggestion Banner -->
           <div
             v-for="insight in dashboardData.insights.filter((i) => i.type === 'suggestion')"
             :key="insight.type"
-            class="md:col-span-2 bg-secondary-container p-md rounded-xl flex items-center justify-between border border-outline-variant"
+            class="md:col-span-2 bg-gradient-to-br from-secondary-container/40 to-secondary-container/20 p-md rounded-2xl flex items-center justify-between border border-secondary-container/60 shadow-sm"
           >
             <div class="flex items-center gap-md">
-              <div class="bg-white p-sm rounded-lg shadow-sm">
+              <div class="bg-surface-container-lowest p-sm rounded-xl shadow-sm">
                 <span class="material-symbols-outlined text-primary">auto_awesome</span>
               </div>
-              <span class="font-label-md text-on-secondary-container">
+              <span class="font-label-md text-on-secondary-container leading-relaxed">
                 {{ insight.suggestion }}
               </span>
             </div>
-            <span class="material-symbols-outlined text-on-secondary-container cursor-pointer">
+            <span class="material-symbols-outlined text-on-secondary-container/60 cursor-pointer hover:text-on-secondary-container transition-colors">
               close
             </span>
           </div>

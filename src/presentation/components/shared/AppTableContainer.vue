@@ -27,9 +27,8 @@ function goToPage(page: number): void {
 
 <template>
   <section
-    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-160"
+    class="bg-surface-container-lowest rounded-2xl border border-outline-variant/40 flex flex-col h-160 shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
   >
-    <!-- Loading -->
     <div
       v-if="loading"
       class="flex-1 flex items-center justify-center text-on-surface-variant"
@@ -38,23 +37,21 @@ function goToPage(page: number): void {
       Cargando...
     </div>
 
-    <!-- Table content -->
     <template v-else>
       <div class="flex-1 overflow-y-auto">
         <div v-if="hasData" class="min-w-0 overflow-x-auto">
           <table class="w-full text-left border-collapse min-w-150">
             <thead class="sticky top-0 z-10">
-              <tr class="bg-surface-container-low border-b border-outline-variant">
+              <tr class="bg-surface-container-low/60 backdrop-blur-sm border-b border-outline-variant/40">
                 <slot name="columns" />
               </tr>
             </thead>
-            <tbody class="font-table-data text-table-data divide-y divide-outline-variant">
+            <tbody class="font-table-data text-table-data divide-y divide-outline-variant/30">
               <slot name="rows" :data="data" />
             </tbody>
           </table>
         </div>
 
-        <!-- Empty State -->
         <div
           v-else
           class="flex flex-col items-center justify-center h-full text-on-surface-variant"
@@ -64,11 +61,10 @@ function goToPage(page: number): void {
         </div>
       </div>
 
-      <!-- Footer -->
       <div
-        class="px-xl py-md bg-surface-container-low/50 border-t border-outline-variant flex items-center justify-between shrink-0"
+        class="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant/40 flex items-center justify-between shrink-0"
       >
-        <p class="text-body-sm text-on-surface-variant">
+        <p class="text-body-sm text-on-surface-variant/70">
           <template v-if="hasData && totalRecords !== undefined">
             Mostrando 1 a {{ Math.min(pageSize ?? totalRecords, totalRecords) }} de
             {{ totalRecords }} registros
@@ -81,13 +77,12 @@ function goToPage(page: number): void {
           </template>
         </p>
 
-        <!-- Paginación (solo si se proporcionan props de paginación) -->
         <div
           v-if="showPagination && hasData && totalPages && totalPages > 0"
           class="flex items-center gap-sm"
         >
           <button
-            class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50 transition-all"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/40 hover:bg-surface-container-high disabled:opacity-50 transition-all"
             :disabled="currentPage === 1"
             @click="goToPage((currentPage ?? 1) - 1)"
           >
@@ -100,8 +95,8 @@ function goToPage(page: number): void {
                 v-if="page === 1 || page === totalPages || Math.abs(page - (currentPage ?? 1)) <= 1"
                 :class="
                   page === currentPage
-                    ? 'w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-label-md text-xs'
-                    : 'w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high font-label-md text-xs'
+                    ? 'w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-on-primary font-label-md text-xs shadow-sm'
+                    : 'w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/40 hover:bg-surface-container-high font-label-md text-xs'
                 "
                 @click="goToPage(page)"
               >
@@ -116,7 +111,7 @@ function goToPage(page: number): void {
           </div>
 
           <button
-            class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-all"
+            class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant/40 hover:bg-surface-container-high transition-all"
             :disabled="currentPage === totalPages"
             @click="goToPage((currentPage ?? 1) + 1)"
           >
