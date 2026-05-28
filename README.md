@@ -138,3 +138,7 @@ Componentes compartidos:
 ## Licencia
 
 MIT
+
+---
+
+_Creado por [Neuropoint.ai](https://neuropoint.ai)_
