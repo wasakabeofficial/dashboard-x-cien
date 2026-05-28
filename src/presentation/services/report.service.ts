@@ -296,7 +296,15 @@ function addHistorialTable(
     tableWidth: width,
     didParseCell: function(data) {
       if (data.column.index === 4 && data.section === 'body') {
-        const status = data.cell.raw as string
+        const rawValue = data.cell.raw
+        const status = typeof rawValue === 'string' 
+          ? rawValue 
+          : Array.isArray(rawValue) 
+            ? rawValue[0] 
+            : String(rawValue)
+        
+        if (!status) return
+        
         if (status === 'soporte_insuficiente') {
           data.cell.styles.textColor = [153, 27, 27]
           data.cell.styles.fillColor = [254, 226, 226]
