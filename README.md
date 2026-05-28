@@ -96,9 +96,9 @@ La presentación **nunca importa de infraestructura** — la inyección de depen
 El dashboard consume 3 endpoints principales:
 
 ```env
-VITE_API_CLIENTS_URL=https://cesar.n8n-wsk.com/webhook/getContactosVue
-VITE_API_HISTORIAL_URL=https://cesar.n8n-wsk.com/webhook/getHistorialVue
-VITE_API_TABLA_URL=https://cesar.n8n-wsk.com/webhook/getTablaVue
+VITE_API_CLIENTS_URL=https://tu-api.com/webhook/getContactosVue
+VITE_API_HISTORIAL_URL=https://tu-api.com/webhook/getHistorialVue
+VITE_API_TABLA_URL=https://tu-api.com/webhook/getTablaVue
 ```
 
 ### JOIN de Datos
