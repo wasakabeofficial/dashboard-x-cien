@@ -75,23 +75,68 @@ function drawStatusBadge(doc: jsPDF, x: number, y: number, status: string): void
   doc.text(formattedStatus, x + 3, y)
 }
 
+const LOGO_URL = 'https://assets.zyrosite.com/m6Lwq9PRb8cokJ8l/xcien-favicon-YD06e6MbjvcBwPvx.svg'
+
+async function loadLogoAsPng(): Promise<string | null> {
+  try {
+    const response = await fetch(LOGO_URL)
+    if (!response.ok) return null
+    const svgText = await response.text()
+    const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+
+    return new Promise<string | null>((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = 128
+        canvas.height = 128
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          URL.revokeObjectURL(url)
+          resolve(null)
+          return
+        }
+        ctx.drawImage(img, 0, 0, 128, 128)
+        URL.revokeObjectURL(url)
+        resolve(canvas.toDataURL('image/png'))
+      }
+      img.onerror = () => {
+        URL.revokeObjectURL(url)
+        resolve(null)
+      }
+      img.src = url
+    })
+  } catch {
+    return null
+  }
+}
+
 export async function downloadReport(
   sections: ReportSection[],
   useCases: ReportUseCases,
 ): Promise<void> {
   if (sections.length === 0) return
 
-  const data = await prefetchData(sections, useCases)
+  const [data, logoDataUrl] = await Promise.all([
+    prefetchData(sections, useCases),
+    loadLogoAsPng(),
+  ])
   const doc = new jsPDF('p', 'mm', 'letter')
   const pageW = doc.internal.pageSize.getWidth()
 
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', 20, 18, 12, 12)
+  }
+
+  const textX = logoDataUrl ? 36 : 20
   doc.setFontSize(22)
   doc.setTextColor(25, 76, 128)
-  doc.text('XCien', 20, 30)
+  doc.text('XCien', textX, 27)
   doc.setFontSize(10)
   doc.setTextColor(100, 100, 100)
-  doc.text('Hub Empresarial — Reporte Ejecutivo', 20, 38)
-  
+  doc.text('Hub Empresarial — Reporte Ejecutivo', textX, 35)
+
   const generatedDate = new Date().toLocaleDateString('es-MX', {
     day: '2-digit',
     month: 'long',
@@ -101,12 +146,12 @@ export async function downloadReport(
   })
   doc.setFontSize(8)
   doc.setTextColor(156, 163, 175)
-  doc.text(`Generado: ${generatedDate}`, pageW - 20, 30, { align: 'right' })
-  
-  doc.setDrawColor(229, 231, 235)
-  doc.line(20, 45, pageW - 20, 45)
+  doc.text(`Generado: ${generatedDate}`, pageW - 20, 27, { align: 'right' })
 
-  let y = 55
+  doc.setDrawColor(229, 231, 235)
+  doc.line(20, 42, pageW - 20, 42)
+
+  let y = 52
 
   const allSelected = sections.length === Object.keys(SECTION_LABELS).length
   const fileName = allSelected
