@@ -166,15 +166,6 @@ function getStatusBadgeClass(status: string): string {
             </p>
           </div>
 
-          <!-- ID Cliente -->
-          <div>
-            <p class="font-label-md text-label-md text-on-surface-variant mb-xs">
-              ID Cliente
-            </p>
-            <p class="font-body-md text-body-md text-primary font-mono">
-              {{ client.id }}
-            </p>
-          </div>
         </div>
       </div>
 

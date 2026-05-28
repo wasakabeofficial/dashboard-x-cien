@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import type { ClientEntity } from '@/domain/entities/client.entity'
+import { computed } from 'vue'
 
 const props = defineProps<{
   clients: ClientEntity[]
@@ -16,6 +17,8 @@ const emit = defineEmits<{
 
 const router = useRouter()
 
+const hasData = computed(() => props.clients.length > 0)
+
 function goToDetail(clientId: string): void {
   router.push({ name: 'client-detail', params: { id: clientId } })
 }
@@ -23,11 +26,11 @@ function goToDetail(clientId: string): void {
 
 <template>
   <section
-    class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden"
+    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-[30rem]"
   >
-    <!-- Header -->
+    <!-- Header (fijo) -->
     <div
-      class="p-xl border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50"
+      class="p-xl border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50 shrink-0"
     >
       <div>
         <h4 class="font-headline-sm text-headline-sm text-primary">Gestión de Clientes</h4>
@@ -37,10 +40,10 @@ function goToDetail(clientId: string): void {
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="overflow-x-auto">
-      <table class="w-full text-left border-collapse">
-        <thead>
+    <!-- Cuerpo de la tabla (scrollable) -->
+    <div class="flex-1 overflow-y-auto">
+      <table v-if="hasData" class="w-full text-left border-collapse">
+        <thead class="sticky top-0 z-10">
           <tr class="bg-surface-container-low border-b border-outline-variant">
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
@@ -105,16 +108,30 @@ function goToDetail(clientId: string): void {
           </tr>
         </tbody>
       </table>
+
+      <!-- Empty State -->
+      <div
+        v-else
+        class="flex flex-col items-center justify-center h-full text-on-surface-variant"
+      >
+        <span class="material-symbols-outlined text-4xl mb-md">table_rows</span>
+        <p class="font-body-md text-body-md">No hay registros para mostrar</p>
+      </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- Pagination (fijo) -->
     <div
-      class="px-xl py-md bg-surface-container-low/50 border-t border-outline-variant flex items-center justify-between"
+      class="px-xl py-md bg-surface-container-low/50 border-t border-outline-variant flex items-center justify-between shrink-0"
     >
       <p class="text-body-sm text-on-surface-variant">
-        Mostrando 1 a {{ Math.min(pageSize, totalRecords) }} de {{ totalRecords }} registros
+        <template v-if="hasData">
+          Mostrando 1 a {{ Math.min(pageSize, totalRecords) }} de {{ totalRecords }} registros
+        </template>
+        <template v-else>
+          Sin registros
+        </template>
       </p>
-      <div class="flex items-center gap-sm">
+      <div v-if="hasData" class="flex items-center gap-sm">
         <button
           class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50 transition-all"
           :disabled="currentPage === 1"
