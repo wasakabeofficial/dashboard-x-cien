@@ -52,7 +52,7 @@ function goToPage(page: number): void {
 
 <template>
   <section
-    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-[30rem]"
+    class="bg-surface-container-lowest rounded-xl border border-outline-variant flex flex-col h-120"
   >
     <!-- Loading -->
     <div
@@ -67,7 +67,7 @@ function goToPage(page: number): void {
     <template v-else>
       <div class="flex-1 overflow-y-auto">
         <div v-if="hasData" class="min-w-0 overflow-x-auto">
-          <table class="w-full text-left border-collapse min-w-[600px]">
+          <table class="w-full text-left border-collapse min-w-150">
             <thead class="sticky top-0 z-10">
               <tr class="bg-surface-container-low border-b border-outline-variant">
                 <slot name="columns" />
