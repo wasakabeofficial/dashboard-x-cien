@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { useClients } from '@/presentation/composables/use-clients.composable'
+import { useSearch } from '@/presentation/composables/use-search.composable'
 import ClientTable from '@/presentation/components/dashboard/ClientTable.vue'
 
+const pageSize = 8
 const {
   paginatedClients,
   currentPage,
@@ -11,7 +14,18 @@ const {
   searchClients,
   goToPage,
   loadClients,
-} = useClients(8)
+} = useClients(pageSize)
+
+const { query: globalQuery } = useSearch()
+
+// Reacciona a la búsqueda global del TopNav
+watch(globalQuery, (q) => {
+  if (q.trim()) {
+    searchClients(q)
+  } else {
+    loadClients()
+  }
+})
 </script>
 
 <template>
@@ -41,7 +55,7 @@ const {
       :clients="paginatedClients"
       :current-page="currentPage"
       :total-pages="totalPages"
-      :page-size="8"
+      :page-size="pageSize"
       :total-records="totalRecords"
       @go-to-page="goToPage"
     />

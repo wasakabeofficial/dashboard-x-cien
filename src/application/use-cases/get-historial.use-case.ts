@@ -11,4 +11,8 @@ export class GetHistorialUseCase {
   async getByFolio(folio: string): Promise<HistorialEntryEntity | null> {
     return this.historialRepository.getByFolio(folio)
   }
+
+  async search(query: string): Promise<HistorialEntryEntity[]> {
+    return this.historialRepository.search(query)
+  }
 }

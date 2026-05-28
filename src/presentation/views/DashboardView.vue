@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useDashboard } from '@/presentation/composables/use-dashboard.composable'
+import type { PeriodFilter } from '@/presentation/composables/use-dashboard.composable'
 import KpiCard from '@/presentation/components/dashboard/KpiCard.vue'
 import DistributionChart from '@/presentation/components/dashboard/DistributionChart.vue'
 
@@ -7,7 +9,32 @@ const {
   data: dashboardData,
   loading: dashboardLoading,
   error: dashboardError,
+  periodFilter,
+  validationTagFilter,
+  setPeriodFilter,
+  setValidationTagFilter,
+  clearFilters,
 } = useDashboard()
+
+const showFilters = ref(false)
+
+const periodOptions: { label: string; value: PeriodFilter }[] = [
+  { label: 'Todo el período', value: 'all' },
+  { label: 'Últimos 7 días', value: '7d' },
+  { label: 'Últimos 30 días', value: '30d' },
+  { label: 'Últimos 90 días', value: '90d' },
+]
+
+const validationTagOptions = [
+  { label: 'Todas', value: 'all' },
+  { label: 'Resuelto', value: 'resuelto' },
+  { label: 'En Proceso', value: 'en_proceso' },
+  { label: 'Soporte Insuficiente', value: 'soporte_insuficiente' },
+]
+
+function hasActiveFilters(): boolean {
+  return periodFilter.value !== 'all' || validationTagFilter.value !== 'all'
+}
 </script>
 
 <template>
@@ -21,12 +48,78 @@ const {
         </p>
       </div>
       <div class="flex gap-md shrink-0">
-        <button
-          class="px-md py-sm bg-surface-container-lowest border border-outline text-secondary font-label-md rounded-lg flex items-center gap-xs hover:bg-surface-container-low transition-all"
-        >
-          <span class="material-symbols-outlined text-[18px]">filter_list</span>
-          Filtros
-        </button>
+        <div class="relative">
+          <button
+            class="px-md py-sm bg-surface-container-lowest border border-outline text-secondary font-label-md rounded-lg flex items-center gap-xs hover:bg-surface-container-low transition-all"
+            :class="{ 'ring-2 ring-primary/40': hasActiveFilters() }"
+            @click="showFilters = !showFilters"
+          >
+            <span class="material-symbols-outlined text-[18px]">filter_list</span>
+            Filtros
+            <span
+              v-if="hasActiveFilters()"
+              class="w-2 h-2 rounded-full bg-primary ml-xs"
+            ></span>
+          </button>
+
+          <!-- Filter Panel Dropdown -->
+          <div
+            v-if="showFilters"
+            class="absolute right-0 top-full mt-sm w-72 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg p-lg z-30"
+          >
+            <div class="space-y-lg">
+              <!-- Período -->
+              <div>
+                <label class="font-label-sm text-label-sm text-on-surface-variant block mb-sm">Período</label>
+                <div class="flex flex-wrap gap-xs">
+                  <button
+                    v-for="opt in periodOptions"
+                    :key="opt.value"
+                    class="px-sm py-xs rounded-full border text-body-sm transition-all"
+                    :class="periodFilter === opt.value
+                      ? 'bg-primary text-on-primary border-primary'
+                      : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container'"
+                    @click="setPeriodFilter(opt.value)"
+                  >
+                    {{ opt.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Categoría -->
+              <div>
+                <label class="font-label-sm text-label-sm text-on-surface-variant block mb-sm">Categoría</label>
+                <div class="flex flex-wrap gap-xs">
+                  <button
+                    v-for="opt in validationTagOptions"
+                    :key="opt.value"
+                    class="px-sm py-xs rounded-full border text-body-sm transition-all"
+                    :class="validationTagFilter === opt.value
+                      ? 'bg-primary text-on-primary border-primary'
+                      : 'bg-surface-container-low text-on-surface-variant border-outline-variant hover:bg-surface-container'"
+                    @click="setValidationTagFilter(opt.value)"
+                  >
+                    {{ opt.label }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Acciones -->
+              <div class="flex justify-between items-center pt-sm border-t border-outline-variant">
+                <span v-if="hasActiveFilters()" class="text-body-sm text-on-surface-variant">
+                  Filtros activos
+                </span>
+                <button
+                  v-if="hasActiveFilters()"
+                  class="text-body-sm text-primary font-label-md hover:underline"
+                  @click="clearFilters()"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

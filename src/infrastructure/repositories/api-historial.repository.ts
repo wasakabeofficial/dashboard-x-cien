@@ -43,6 +43,21 @@ export class ApiHistorialRepository implements HistorialRepository {
     return all.find((e) => e.folio === folio) ?? null
   }
 
+  async search(query: string): Promise<HistorialEntryEntity[]> {
+    const all = await this.getAll()
+    const term = query.toLowerCase()
+    return all.filter(
+      (e) =>
+        e.folio.toLowerCase().includes(term) ||
+        e.nombreTitular.toLowerCase().includes(term) ||
+        e.categoriaTecnica.toLowerCase().includes(term) ||
+        e.estado.toLowerCase().includes(term) ||
+        e.telefono.includes(term) ||
+        e.correo.toLowerCase().includes(term) ||
+        e.situacion.toLowerCase().includes(term),
+    )
+  }
+
   private mapToEntity(item: ApiHistorial): HistorialEntryEntity {
     return {
       folio: item.Folio || '—',

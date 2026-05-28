@@ -35,3 +35,9 @@ export interface InsightEntity {
   teamMembers?: string[]
   suggestion?: string
 }
+
+/** Filtros disponibles para el dashboard */
+export interface DashboardFilter {
+  period?: 'all' | '7d' | '30d' | '90d'
+  validationTag?: string
+}

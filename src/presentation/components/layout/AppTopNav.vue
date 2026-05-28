@@ -1,9 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useSidebar } from '@/presentation/composables/use-sidebar.composable'
+import { useSearch } from '@/presentation/composables/use-search.composable'
 
-const searchQuery = ref('')
+const localQuery = ref('')
 const { toggle } = useSidebar()
+const { setQuery } = useSearch()
+
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(localQuery, (val) => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    setQuery(val)
+  }, 300)
+})
 </script>
 
 <template>
@@ -24,13 +35,25 @@ const { toggle } = useSidebar()
       <div
         class="flex items-center bg-surface-container-low rounded-full px-md py-xs max-w-md w-full border border-outline-variant focus-within:ring-2 focus-within:ring-primary/20 transition-all"
       >
-        <span class="material-symbols-outlined text-on-surface-variant mr-xs text-[18px]">search</span>
+        <span class="material-symbols-outlined text-on-surface-variant mr-xs text-[18px]"
+          >search</span
+        >
         <input
-          v-model="searchQuery"
+          v-model="localQuery"
           class="bg-transparent border-none focus:ring-0 text-body-sm w-full outline-none min-w-0"
           type="text"
-          placeholder="Buscar..."
+          placeholder="Buscar en la vista actual..."
         />
+        <button
+          v-if="localQuery"
+          class="text-on-surface-variant hover:text-on-surface transition-colors ml-xs"
+          @click="
+            localQuery = '',
+            setQuery('')
+          "
+        >
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
       </div>
     </div>
 

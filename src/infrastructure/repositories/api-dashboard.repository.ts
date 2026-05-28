@@ -1,5 +1,5 @@
 import type { DashboardRepository } from '@/domain/repositories/dashboard-repository.interface'
-import type { DashboardDataEntity, KpiEntity, DistributionItemEntity, InsightEntity } from '@/domain/entities/dashboard.entity'
+import type { DashboardDataEntity, DashboardFilter, KpiEntity, DistributionItemEntity, InsightEntity } from '@/domain/entities/dashboard.entity'
 import type { TablaRecordEntity } from '@/domain/entities/tabla-record.entity'
 
 /** Tipo del objeto que devuelve la API getTablaVue */
@@ -23,24 +23,56 @@ interface ApiTablaRecord {
  *   - validationTag → distribución (pastel)
  *   - durationMInutes → KPI de duración promedio
  *   - callCost       → KPI de costo total
- *   - createdAt       → (reservado para timeline futura)
+ *   - createdAt       → filtro por período
  *
  * Principios SOLID:
  *   SRP — solo se ocupa de obtener y mapear datos del dashboard
  *   LSP — sustituye 100% a MockDashboardRepository
+ *   OCP — acepta DashboardFilter opcional para extender comportamiento sin modificar la clase
  *   DIP — implementa DashboardRepository (abstracción)
  */
 export class ApiDashboardRepository implements DashboardRepository {
   private readonly apiUrl = import.meta.env.VITE_API_TABLA_URL
 
-  async getDashboardData(): Promise<DashboardDataEntity> {
-    const records = await this.fetchRecords()
+  async getDashboardData(filter?: DashboardFilter): Promise<DashboardDataEntity> {
+    let records = await this.fetchRecords()
+
+    // ── Aplicar filtros ──
+    if (filter) {
+      records = this.applyFilter(records, filter)
+    }
+
     return {
       kpis: this.buildKpis(records),
       distribution: this.buildDistribution(records),
       successRate: this.calcSuccessRate(records),
       insights: this.buildInsights(records),
     }
+  }
+
+  // ────────────── Filtros ──────────────
+
+  private applyFilter(records: TablaRecordEntity[], filter: DashboardFilter): TablaRecordEntity[] {
+    let filtered = records
+
+    // Filtro por período
+    if (filter.period && filter.period !== 'all') {
+      const now = new Date()
+      const cutoff = new Date()
+      const days = parseInt(filter.period.replace('d', ''))
+      cutoff.setDate(now.getDate() - days)
+      filtered = filtered.filter((r) => {
+        const date = new Date(r.createdAt)
+        return date >= cutoff
+      })
+    }
+
+    // Filtro por validationTag
+    if (filter.validationTag && filter.validationTag !== 'all') {
+      filtered = filtered.filter((r) => r.validationTag === filter.validationTag)
+    }
+
+    return filtered
   }
 
   // ────────────── helpers ──────────────
@@ -92,7 +124,7 @@ export class ApiDashboardRepository implements DashboardRepository {
       {
         title: 'Total de Llamadas',
         value: total.toLocaleString(),
-        subtitle: 'Llamadas registradas en el período',
+        subtitle: total > 0 ? 'Llamadas registradas en el período' : 'Sin registros',
         icon: 'call',
         trend: { value: `${total} registros`, direction: 'up' },
         colorClass: 'bg-primary-fixed text-on-primary-fixed',
@@ -100,15 +132,15 @@ export class ApiDashboardRepository implements DashboardRepository {
       {
         title: 'Costo Total',
         value: `$${totalCost.toFixed(2)} USD`,
-        subtitle: 'Suma de costos de todas las llamadas',
+        subtitle: total > 0 ? 'Suma de costos de todas las llamadas' : 'Sin datos',
         icon: 'payments',
         trend: { value: `${records.length} llamadas`, direction: 'up' },
         colorClass: 'bg-secondary-fixed text-on-secondary-fixed',
       },
       {
         title: 'Duración Promedio',
-        value: `${avgDuration.toFixed(1)} min`,
-        subtitle: 'Tiempo promedio por llamada',
+        value: total > 0 ? `${avgDuration.toFixed(1)} min` : '—',
+        subtitle: total > 0 ? 'Tiempo promedio por llamada' : 'Sin mediciones',
         icon: 'timer',
         trend: { value: `${total} mediciones`, direction: 'up' },
         colorClass: 'bg-tertiary-fixed text-on-tertiary-fixed',

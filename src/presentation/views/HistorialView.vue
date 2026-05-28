@@ -1,8 +1,20 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import { useHistorial } from '@/presentation/composables/use-historial.composable'
+import { useSearch } from '@/presentation/composables/use-search.composable'
 import HistorialTable from '@/presentation/components/dashboard/HistorialTable.vue'
 
-const { entries, loading, error } = useHistorial()
+const { entries, loading, error, searchHistorial, load } = useHistorial()
+const { query: globalQuery } = useSearch()
+
+// Reacciona a la búsqueda global del TopNav
+watch(globalQuery, (q) => {
+  if (q.trim()) {
+    searchHistorial(q)
+  } else {
+    load()
+  }
+})
 </script>
 
 <template>
