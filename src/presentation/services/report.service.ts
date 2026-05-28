@@ -239,19 +239,22 @@ function addUnifiedLayout(
 
   if (!hasHistorial && !hasClients) return y
 
-  if (hasHistorial && hasClients) {
-    const historialWidth = (pageW - 45) * 0.65
-    const clientsWidth = (pageW - 45) * 0.35
-    
-    const historialY = addHistorialTable(doc, y, 20, historialWidth, data.historial!)
-    const clientsY = addClientsCard(doc, y, 20 + historialWidth + 5, clientsWidth, data.clients!)
-    
-    return Math.max(historialY, clientsY)
-  } else if (hasHistorial) {
-    return addHistorialTable(doc, y, 20, pageW - 40, data.historial!)
-  } else {
-    return addClientsCard(doc, y, 20, pageW - 40, data.clients!)
+  const fullWidth = pageW - 40
+
+  if (hasHistorial) {
+    y = addHistorialTable(doc, y, 20, fullWidth, data.historial!)
+    y += 10
   }
+
+  if (hasClients) {
+    if (y > 220) {
+      doc.addPage()
+      y = 30
+    }
+    y = addClientsCard(doc, y, 20, fullWidth, data.clients!)
+  }
+
+  return y
 }
 
 function addHistorialTable(
