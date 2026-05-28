@@ -17,7 +17,7 @@ const navItems = ref<NavItem[]>([
 
 const activeIndex = ref(0)
 
-function setActive(index: number) {
+function setActive(index: number): void {
   activeIndex.value = index
 }
 </script>

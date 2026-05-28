@@ -10,7 +10,7 @@ import AppFooter from '@/presentation/components/layout/AppFooter.vue'
 
   <!-- Main Content Wrapper -->
   <main class="ml-[280px] min-h-screen flex flex-col">
-    <AppTopNav />
+    <AppTopNav @search="(q) => $emit('search', q)" />
 
     <!-- Page Content (router outlet) -->
     <router-view />

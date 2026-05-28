@@ -1,32 +1,23 @@
 <script setup lang="ts">
-import type { Client } from '@/types'
-import { ref, computed } from 'vue'
+import type { ClientEntity } from '@/domain/entities/client.entity'
 
-const props = defineProps<{
-  clients: Client[]
+defineProps<{
+  clients: ClientEntity[]
+  currentPage: number
+  totalPages: number
+  pageSize: number
+  totalRecords: number
 }>()
 
-const currentPage = ref(1)
-const pageSize = 4
+const emit = defineEmits<{
+  'go-to-page': [page: number]
+}>()
 
-const totalPages = computed(() => Math.ceil(props.clients.length / pageSize))
-
-const paginatedClients = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  return props.clients.slice(start, start + pageSize)
-})
-
-function goToPage(page: number) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-}
-
-function getStatusColor(status: string) {
+function getStatusColor(status: string): string {
   return status === 'Activo' ? 'bg-on-tertiary-container' : 'bg-error'
 }
 
-function getSituationClass(situation: string) {
+function getSituationClass(situation: string): string {
   return situation === 'Residencial'
     ? 'bg-secondary-container text-on-secondary-container'
     : 'bg-tertiary-fixed text-on-tertiary-fixed'
@@ -34,7 +25,9 @@ function getSituationClass(situation: string) {
 </script>
 
 <template>
-  <section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+  <section
+    class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden"
+  >
     <!-- Header -->
     <div
       class="p-xl border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50"
@@ -103,7 +96,7 @@ function getSituationClass(situation: string) {
         </thead>
         <tbody class="font-table-data text-table-data divide-y divide-outline-variant">
           <tr
-            v-for="client in paginatedClients"
+            v-for="client in clients"
             :key="client.id"
             class="hover:bg-surface-container-low transition-colors group"
           >
@@ -140,7 +133,9 @@ function getSituationClass(situation: string) {
               </div>
             </td>
             <td class="px-xl py-md text-center">
-              <button class="material-symbols-outlined text-on-surface-variant hover:text-primary">
+              <button
+                class="material-symbols-outlined text-on-surface-variant hover:text-primary"
+              >
                 more_vert
               </button>
             </td>
@@ -154,13 +149,13 @@ function getSituationClass(situation: string) {
       class="px-xl py-md bg-surface-container-low/50 border-t border-outline-variant flex items-center justify-between"
     >
       <p class="text-body-sm text-on-surface-variant">
-        Mostrando 1 a {{ Math.min(pageSize, clients.length) }} de {{ clients.length }} registros
+        Mostrando 1 a {{ Math.min(pageSize, totalRecords) }} de {{ totalRecords }} registros
       </p>
       <div class="flex items-center gap-sm">
         <button
           class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high disabled:opacity-50 transition-all"
           :disabled="currentPage === 1"
-          @click="goToPage(currentPage - 1)"
+          @click="emit('go-to-page', currentPage - 1)"
         >
           <span class="material-symbols-outlined text-[18px]">chevron_left</span>
         </button>
@@ -168,24 +163,32 @@ function getSituationClass(situation: string) {
         <div class="flex items-center gap-xs">
           <template v-for="page in totalPages" :key="page">
             <button
-              v-if="page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1"
+              v-if="
+                page === 1 ||
+                page === totalPages ||
+                Math.abs(page - currentPage) <= 1
+              "
               :class="
                 page === currentPage
                   ? 'w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-label-md text-xs'
                   : 'w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high font-label-md text-xs'
               "
-              @click="goToPage(page)"
+              @click="emit('go-to-page', page)"
             >
               {{ page }}
             </button>
-            <span v-else-if="page === currentPage - 2 || page === currentPage + 2" class="text-on-surface-variant">...</span>
+            <span
+              v-else-if="page === currentPage - 2 || page === currentPage + 2"
+              class="text-on-surface-variant"
+              >...</span
+            >
           </template>
         </div>
 
         <button
           class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-all"
           :disabled="currentPage === totalPages"
-          @click="goToPage(currentPage + 1)"
+          @click="emit('go-to-page', currentPage + 1)"
         >
           <span class="material-symbols-outlined text-[18px]">chevron_right</span>
         </button>

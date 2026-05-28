@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DistributionItem } from '@/types'
+import type { DistributionItemEntity } from '@/domain/entities/dashboard.entity'
 
 defineProps<{
-  items: DistributionItem[]
+  items: DistributionItemEntity[]
   successRate: number
 }>()
 </script>
@@ -33,11 +33,7 @@ defineProps<{
 
     <!-- Legend -->
     <div class="mt-xl space-y-md">
-      <div
-        v-for="item in items"
-        :key="item.label"
-        class="flex items-center justify-between"
-      >
+      <div v-for="item in items" :key="item.label" class="flex items-center justify-between">
         <div class="flex items-center gap-xs">
           <span :class="`w-3 h-3 rounded-full ${item.colorClass}`"></span>
           <span class="text-body-sm text-on-surface-variant">{{ item.label }}</span>

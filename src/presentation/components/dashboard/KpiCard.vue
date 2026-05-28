@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { KpiData } from '@/types'
+import type { KpiEntity } from '@/domain/entities/dashboard.entity'
 
 defineProps<{
-  data: KpiData
+  data: KpiEntity
 }>()
 </script>
 
@@ -17,7 +17,11 @@ defineProps<{
       </div>
       <span
         class="font-label-md text-label-md flex items-center gap-xs"
-        :class="data.trend.direction === 'up' ? 'text-on-tertiary-container' : 'text-on-primary-fixed-variant'"
+        :class="
+          data.trend.direction === 'up'
+            ? 'text-on-tertiary-container'
+            : 'text-on-primary-fixed-variant'
+        "
       >
         {{ data.trend.value }}
         <span class="material-symbols-outlined text-[16px]">
