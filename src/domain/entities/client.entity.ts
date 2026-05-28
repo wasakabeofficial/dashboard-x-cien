@@ -1,12 +1,25 @@
 /** Entidad de negocio: Cliente */
 export interface ClientEntity {
-  folio: string
+  // --- Campos principales (tabla resumen) ---
   id: string
-  date: string
   name: string
+  contactoPrincipal: string
+  phone: string
+  email: string
+
+  // --- Campos para el detalle ---
+  folio: string
+  date: string
   initials: string
   situation: 'Residencial' | 'Empresarial'
   status: 'Activo' | 'Inactivo'
-  phone: string
-  email: string
+  tipoServicio: string
+  velocidad: string
+  medio: string
+  plan: string
+  cpe: string
+  direccion: string
+  ciudad: string
+  rfc: string
+  observaciones: string
 }

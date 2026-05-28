@@ -1,15 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-
-const emit = defineEmits<{
-  search: [query: string]
-}>()
+import { ref } from 'vue'
 
 const searchQuery = ref('')
-
-watch(searchQuery, (value) => {
-  emit('search', value)
-})
 </script>
 
 <template>

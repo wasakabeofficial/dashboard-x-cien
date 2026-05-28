@@ -188,7 +188,6 @@ watch(
         :total-pages="totalPages"
         :page-size="4"
         :total-records="totalRecords"
-        :loading="clientsLoading"
         @go-to-page="goToPage"
       />
     </template>

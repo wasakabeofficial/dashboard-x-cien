@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 
-defineProps<{
+const props = defineProps<{
   clients: ClientEntity[]
   currentPage: number
   totalPages: number
@@ -13,14 +14,10 @@ const emit = defineEmits<{
   'go-to-page': [page: number]
 }>()
 
-function getStatusColor(status: string): string {
-  return status === 'Activo' ? 'bg-on-tertiary-container' : 'bg-error'
-}
+const router = useRouter()
 
-function getSituationClass(situation: string): string {
-  return situation === 'Residencial'
-    ? 'bg-secondary-container text-on-secondary-container'
-    : 'bg-tertiary-fixed text-on-tertiary-fixed'
+function goToDetail(clientId: string): void {
+  router.push({ name: 'client-detail', params: { id: clientId } })
 }
 </script>
 
@@ -38,13 +35,6 @@ function getSituationClass(situation: string): string {
           Visualización y administración de registros activos
         </p>
       </div>
-      <div class="flex items-center gap-md">
-        <button
-          class="px-md py-sm text-secondary font-label-md border border-outline rounded-lg hover:bg-surface-variant transition-all"
-        >
-          Exportar CSV
-        </button>
-      </div>
     </div>
 
     <!-- Table -->
@@ -55,42 +45,27 @@ function getSituationClass(situation: string): string {
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
             >
-              Folio
+              Empresa
             </th>
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
             >
-              ID Cliente
+              Contacto Principal
             </th>
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
             >
-              Fecha
+              Teléfono
             </th>
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
             >
-              Titular
-            </th>
-            <th
-              class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
-            >
-              Situación
-            </th>
-            <th
-              class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
-            >
-              Estado
-            </th>
-            <th
-              class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
-            >
-              Contacto
+              Correo
             </th>
             <th
               class="px-xl py-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-center"
             >
-              Acciones
+              Detalle
             </th>
           </tr>
         </thead>
@@ -98,46 +73,34 @@ function getSituationClass(situation: string): string {
           <tr
             v-for="client in clients"
             :key="client.id"
-            class="hover:bg-surface-container-low transition-colors group"
+            class="hover:bg-surface-container-low transition-colors group cursor-pointer"
+            @click="goToDetail(client.id)"
           >
-            <td class="px-xl py-md text-primary font-bold">{{ client.folio }}</td>
-            <td class="px-xl py-md">{{ client.id }}</td>
-            <td class="px-xl py-md">{{ client.date }}</td>
             <td class="px-xl py-md">
               <div class="flex items-center gap-sm">
                 <div
-                  class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-[10px] flex items-center justify-center"
+                  class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-[10px] flex items-center justify-center font-bold"
                 >
                   {{ client.initials }}
                 </div>
-                <span>{{ client.name }}</span>
+                <span class="font-semibold text-primary">{{ client.name }}</span>
               </div>
             </td>
-            <td class="px-xl py-md">
-              <span
-                :class="`px-xs py-0.5 text-xs rounded font-label-md ${getSituationClass(client.situation)}`"
-              >
-                {{ client.situation }}
-              </span>
+            <td class="px-xl py-md text-on-surface">
+              {{ client.contactoPrincipal }}
             </td>
-            <td class="px-xl py-md">
-              <div class="flex items-center gap-xs">
-                <span :class="`w-2 h-2 rounded-full ${getStatusColor(client.status)}`"></span>
-                {{ client.status }}
-              </div>
+            <td class="px-xl py-md text-on-surface font-mono text-body-sm">
+              {{ client.phone }}
             </td>
-            <td class="px-xl py-md">
-              <div class="text-body-sm">
-                <p>{{ client.phone }}</p>
-                <p class="text-on-surface-variant">{{ client.email }}</p>
-              </div>
+            <td class="px-xl py-md text-on-surface-variant text-body-sm">
+              {{ client.email }}
             </td>
             <td class="px-xl py-md text-center">
-              <button
-                class="material-symbols-outlined text-on-surface-variant hover:text-primary"
+              <span
+                class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors"
               >
-                more_vert
-              </button>
+                chevron_right
+              </span>
             </td>
           </tr>
         </tbody>

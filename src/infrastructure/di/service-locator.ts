@@ -1,6 +1,6 @@
 import type { ClientRepository } from '@/domain/repositories/client-repository.interface'
 import type { DashboardRepository } from '@/domain/repositories/dashboard-repository.interface'
-import { MockClientRepository } from '@/infrastructure/repositories/mock-client.repository'
+import { ApiClientRepository } from '@/infrastructure/repositories/api-client.repository'
 import { MockDashboardRepository } from '@/infrastructure/repositories/mock-dashboard.repository'
 import { GetDashboardDataUseCase } from '@/application/use-cases/get-dashboard-data.use-case'
 import { GetClientsUseCase } from '@/application/use-cases/get-clients.use-case'
@@ -23,10 +23,10 @@ class ServiceLocator {
 
   constructor() {
     // --- Bindings: abstracción → implementación concreta ---
-    // Para cambiar a API real, reemplazar:
-    //   new MockDashboardRepository() → new ApiDashboardRepository()
+    // Dashboard aún usa datos mock (se puede cambiar después)
     this.dashboardRepository = new MockDashboardRepository()
-    this.clientRepository = new MockClientRepository()
+    // Clientes: ahora consume la API real
+    this.clientRepository = new ApiClientRepository()
 
     // --- Casos de uso (reciben las dependencias por constructor) ---
     this.getDashboardDataUseCase = new GetDashboardDataUseCase(this.dashboardRepository)

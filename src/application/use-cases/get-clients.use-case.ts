@@ -19,4 +19,8 @@ export class GetClientsUseCase {
   async search(query: string): Promise<ClientEntity[]> {
     return this.clientRepository.search(query)
   }
+
+  async getById(id: string): Promise<ClientEntity | null> {
+    return this.clientRepository.getById(id)
+  }
 }

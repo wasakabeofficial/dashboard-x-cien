@@ -55,6 +55,14 @@ export function useClients(pageSize = 4) {
     }
   }
 
+  /**
+   * Obtiene un cliente por su ID (para la vista de detalle).
+   */
+  async function getClientById(id: string): Promise<ClientEntity | null> {
+    const useCase = serviceLocator.getClients()
+    return useCase.getById(id)
+  }
+
   onMounted(loadClients)
 
   return {
@@ -68,5 +76,6 @@ export function useClients(pageSize = 4) {
     searchClients,
     goToPage,
     loadClients,
+    getClientById,
   }
 }
