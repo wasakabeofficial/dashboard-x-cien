@@ -19,9 +19,8 @@ watch(localQuery, (val) => {
 
 <template>
   <header
-    class="sticky top-0 w-full z-20 bg-surface border-b border-outline-variant flex items-center justify-between h-16 px-md lg:px-xl"
+    class="sticky top-0 w-full z-30 bg-surface border-b border-outline-variant flex items-center justify-between h-16 px-xl"
   >
-    <!-- Hamburger + Search -->
     <div class="flex items-center gap-md flex-1">
       <!-- Hamburger (solo mobile) -->
       <button
@@ -31,34 +30,22 @@ watch(localQuery, (val) => {
         <span class="material-symbols-outlined">menu</span>
       </button>
 
-      <!-- Search -->
+      <!-- Search — estilo exacto del commit 97b67fe -->
       <div
-        class="flex items-center bg-surface-container-low rounded-full px-md py-xs max-w-md w-full border border-outline-variant focus-within:ring-2 focus-within:ring-primary/20 transition-all"
+        class="flex items-center bg-surface-container-low rounded-full px-md py-xs w-96 border border-outline-variant focus-within:ring-2 focus-within:ring-primary/20 transition-all"
       >
-        <span class="material-symbols-outlined text-on-surface-variant mr-xs text-[18px]"
-          >search</span
-        >
+        <span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
         <input
           v-model="localQuery"
-          class="bg-transparent border-none focus:ring-0 text-body-sm w-full outline-none min-w-0"
+          class="bg-transparent border-none focus:ring-0 text-body-sm w-full outline-none"
           type="text"
-          placeholder="Buscar en la vista actual..."
+          placeholder="Buscar clientes u operaciones..."
         />
-        <button
-          v-if="localQuery"
-          class="text-on-surface-variant hover:text-on-surface transition-colors ml-xs"
-          @click="
-            localQuery = '',
-            setQuery('')
-          "
-        >
-          <span class="material-symbols-outlined text-[18px]">close</span>
-        </button>
       </div>
     </div>
 
     <!-- Actions -->
-    <div class="flex items-center gap-sm lg:gap-md shrink-0">
+    <div class="flex items-center gap-md shrink-0">
       <button
         class="p-xs hover:bg-surface-container-low rounded-full transition-all text-on-surface-variant"
       >
@@ -77,7 +64,7 @@ watch(localQuery, (val) => {
 
       <!-- Avatar -->
       <div
-        class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center border border-outline overflow-hidden ml-sm lg:ml-md shrink-0"
+        class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center border border-outline overflow-hidden ml-md shrink-0"
       >
         <img
           alt="Admin"
