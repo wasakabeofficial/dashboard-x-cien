@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf'
-import 'jspdf-autotable'
+import { autoTable } from 'jspdf-autotable'
 import { serviceLocator } from '@/infrastructure/di/service-locator'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
@@ -223,7 +223,7 @@ function addDuracionPromedio(doc: jsPDF, y: number, dashboard: DashboardDataEnti
 }
 
 function addGestionClientes(doc: jsPDF, y: number, clients: ClientEntity[]): number {
-  ;(doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     head: [['Empresa', 'Contacto', 'Teléfono', 'Correo', 'Estado']],
     body: clients.map((c) => [c.name, c.contactoPrincipal, c.phone, c.email, c.status]),
@@ -232,11 +232,11 @@ function addGestionClientes(doc: jsPDF, y: number, clients: ClientEntity[]): num
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).lastAutoTable.finalY + 10
+  return (doc as any).getLastAutoTable()?.finalY ?? y + 10
 }
 
 function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]): number {
-  ;(doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     head: [['Folio', 'Fecha', 'Titular', 'Categoría', 'Estado']],
     body: historial.map((h) => [h.folio, h.fecha, h.nombreTitular, h.categoriaTecnica, h.estado]),
@@ -245,5 +245,5 @@ function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]):
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).lastAutoTable.finalY + 10
+  return (doc as any).getLastAutoTable()?.finalY ?? y + 10
 }
