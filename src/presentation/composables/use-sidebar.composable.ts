@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
-/** Estado global compartido del sidebar (responsivo) */
 const isOpen = ref(false)
+const isExpanded = ref(true)
 
 export function useSidebar() {
   function open(): void {
@@ -16,5 +16,17 @@ export function useSidebar() {
     isOpen.value = !isOpen.value
   }
 
-  return { isOpen, open, close, toggle }
+  function expand(): void {
+    isExpanded.value = true
+  }
+
+  function collapse(): void {
+    isExpanded.value = false
+  }
+
+  function toggleExpand(): void {
+    isExpanded.value = !isExpanded.value
+  }
+
+  return { isOpen, isExpanded, open, close, toggle, expand, collapse, toggleExpand }
 }

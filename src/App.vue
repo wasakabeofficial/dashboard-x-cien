@@ -16,7 +16,7 @@ provide(GET_CLIENTS_USE_CASE, serviceLocator.getClients())
 provide(GET_HISTORIAL_USE_CASE, serviceLocator.getHistorial())
 provide(GET_DASHBOARD_DATA_USE_CASE, serviceLocator.getDashboardData())
 
-const { isOpen, close } = useSidebar()
+const { isOpen, isExpanded, close } = useSidebar()
 </script>
 
 <template>
@@ -31,7 +31,10 @@ const { isOpen, close } = useSidebar()
     </Transition>
   </Teleport>
 
-  <main class="min-h-screen flex flex-col lg:ml-70">
+  <main 
+    class="min-h-screen flex flex-col transition-all duration-300"
+    :class="isExpanded ? 'lg:ml-70' : 'lg:ml-20'"
+  >
     <AppTopNav />
     <div class="flex-1 overflow-x-hidden">
       <router-view />
