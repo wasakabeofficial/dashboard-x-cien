@@ -75,8 +75,13 @@ export async function downloadReport(sections: ReportSection[]): Promise<void> {
 
   // Renderizar cada seccion con datos precargados
   for (const section of sections) {
+    // Gestion de Clientes e Historial siempre en pagina nueva
+    if (section === 'gestion_clientes' || section === 'historial') {
+      doc.addPage()
+      y = 30
+    }
     y = addSection(doc, section, y, pageW, data)
-    if (y > 240) {
+    if (y > 240 && section !== 'gestion_clientes' && section !== 'historial') {
       doc.addPage()
       y = 30
     }
