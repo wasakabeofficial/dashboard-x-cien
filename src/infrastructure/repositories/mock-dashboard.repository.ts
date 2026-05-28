@@ -1,11 +1,6 @@
 import type { DashboardRepository } from '@/domain/repositories/dashboard-repository.interface'
 import type { DashboardDataEntity, DashboardFilter } from '@/domain/entities/dashboard.entity'
 
-/**
- * Implementación mock del repositorio de dashboard.
- * Principio LSP — sustituible por cualquier implementación real.
- * Principio ISP — implementa SOLO el contrato de DashboardRepository, nada extra.
- */
 export class MockDashboardRepository implements DashboardRepository {
   async getDashboardData(_filter?: DashboardFilter): Promise<DashboardDataEntity> {
     await this.delay(250)

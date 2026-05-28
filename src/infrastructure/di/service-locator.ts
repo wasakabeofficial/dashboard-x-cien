@@ -8,29 +8,19 @@ import { GetDashboardDataUseCase } from '@/application/use-cases/get-dashboard-d
 import { GetClientsUseCase } from '@/application/use-cases/get-clients.use-case'
 import { GetHistorialUseCase } from '@/application/use-cases/get-historial.use-case'
 
-/**
- * Service Locator / Contenedor de Inyección de Dependencias.
- *
- * Responsabilidad única: resolver y proporcionar las dependencias de toda la aplicación.
- * Principio DIP — aquí se conectan las abstracciones (interfaces) con las implementaciones concretas.
- * Principio SRP — esta es la única clase que conoce TODAS las implementaciones concretas.
- */
+
 class ServiceLocator {
   private readonly dashboardRepository: DashboardRepository
   private readonly clientRepository: ClientRepository
   private readonly historialRepository: HistorialRepository
-
   private readonly getDashboardDataUseCase: GetDashboardDataUseCase
   private readonly getClientsUseCase: GetClientsUseCase
   private readonly getHistorialUseCase: GetHistorialUseCase
 
   constructor() {
-    // --- Bindings ---
     this.dashboardRepository = new ApiDashboardRepository()
     this.clientRepository = new ApiClientRepository()
     this.historialRepository = new ApiHistorialRepository()
-
-    // --- Casos de uso ---
     this.getDashboardDataUseCase = new GetDashboardDataUseCase(this.dashboardRepository)
     this.getClientsUseCase = new GetClientsUseCase(this.clientRepository)
     this.getHistorialUseCase = new GetHistorialUseCase(this.historialRepository)
@@ -49,5 +39,5 @@ class ServiceLocator {
   }
 }
 
-/** Instancia singleton del Service Locator */
+
 export const serviceLocator = new ServiceLocator()

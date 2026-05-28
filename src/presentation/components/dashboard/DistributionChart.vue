@@ -15,14 +15,14 @@ defineProps<{
     <!-- Abstract Pie Chart -->
     <div class="relative flex items-center justify-center py-xl">
       <div
-        class="w-48 h-48 rounded-full border-[16px] border-primary flex items-center justify-center relative"
+        class="w-48 h-48 rounded-full border-16 border-primary flex items-center justify-center relative"
       >
         <div
-          class="absolute inset-0 border-[16px] border-tertiary-fixed rounded-full"
+          class="absolute inset-0 border-16 border-tertiary-fixed rounded-full"
           style="clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%)"
         ></div>
         <div
-          class="absolute inset-0 border-[16px] border-secondary-fixed rounded-full"
+          class="absolute inset-0 border-16 border-secondary-fixed rounded-full"
           style="clip-path: polygon(50% 50%, 0% 50%, 0% 100%, 50% 100%)"
         ></div>
         <div class="text-center">

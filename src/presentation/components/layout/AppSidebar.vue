@@ -36,7 +36,7 @@ function navigate(item: NavItem): void {
 
 <template>
   <aside
-    class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-xl z-40 transition-transform duration-300 lg:translate-x-0"
+    class="fixed left-0 top-0 h-screen w-70 bg-surface border-r border-outline-variant flex flex-col py-xl z-40 transition-transform duration-300 lg:translate-x-0"
     :class="isOpen ? 'translate-x-0' : '-translate-x-full'"
   >
     <!-- Brand + Close -->

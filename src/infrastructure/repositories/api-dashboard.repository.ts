@@ -3,7 +3,6 @@ import type { DashboardDataEntity, DashboardFilter } from '@/domain/entities/das
 import type { TablaRecordEntity } from '@/domain/entities/tabla-record.entity'
 import { DashboardCalculatorService } from '@/domain/services/dashboard-calculator.service'
 
-/** Tipo del objeto que devuelve la API getTablaVue */
 interface ApiTablaRecord {
   sendId: string
   Content: string
@@ -16,27 +15,12 @@ interface ApiTablaRecord {
   createdAt: string
   updatedAt: string
 }
-
-/**
- * Implementación real del repositorio de dashboard.
- *
- * Responsabilidad única: obtener datos crudos de la API y aplicar filtros.
- * La transformación a KPIs/distribución/insights delega en DashboardCalculatorService.
- *
- * Principios SOLID:
- *   SRP — solo fetch + filtros; los cálculos están en el servicio de dominio
- *   LSP — sustituye 100% a MockDashboardRepository
- *   OCP — acepta DashboardFilter opcional para extender comportamiento sin modificar la clase
- *   DIP — implementa DashboardRepository (abstracción)
- */
-export class ApiDashboardRepository implements DashboardRepository {
+class ApiDashboardRepository implements DashboardRepository {
   private readonly apiUrl = import.meta.env.VITE_API_TABLA_URL
   private readonly calculator = new DashboardCalculatorService()
 
   async getDashboardData(filter?: DashboardFilter): Promise<DashboardDataEntity> {
     let records = await this.fetchRecords()
-
-    // ── Aplicar filtros ──
     if (filter) {
       records = this.applyFilter(records, filter)
     }
@@ -49,7 +33,6 @@ export class ApiDashboardRepository implements DashboardRepository {
     }
   }
 
-  // ────────────── Filtros ──────────────
 
   private applyFilter(records: TablaRecordEntity[], filter: DashboardFilter): TablaRecordEntity[] {
     let filtered = records
@@ -72,7 +55,6 @@ export class ApiDashboardRepository implements DashboardRepository {
     return filtered
   }
 
-  // ────────────── API helpers ──────────────
 
   private async fetchRecords(): Promise<TablaRecordEntity[]> {
     const url = this.getUrl()

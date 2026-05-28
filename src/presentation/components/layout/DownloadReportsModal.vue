@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed, watch } from 'vue'
 import { useReportModal } from '@/presentation/composables/use-report-modal.composable'
 import {
   GET_CLIENTS_USE_CASE,
@@ -8,18 +8,20 @@ import {
 } from '@/presentation/di-keys'
 import { downloadReport, type ReportSection } from '@/presentation/services/report.service'
 
-const { isOpen, close } = useReportModal()
-
-// Casos de uso inyectados desde App.vue — DIP respetado
-const getDashboardData = inject(GET_DASHBOARD_DATA_USE_CASE)!
-const getClients = inject(GET_CLIENTS_USE_CASE)!
-const getHistorial = inject(GET_HISTORIAL_USE_CASE)!
-
 interface CheckItem {
   key: ReportSection
   label: string
   checked: boolean
 }
+
+const { isOpen, close } = useReportModal()
+
+const getDashboardData = inject(GET_DASHBOARD_DATA_USE_CASE)!
+const getClients = inject(GET_CLIENTS_USE_CASE)!
+const getHistorial = inject(GET_HISTORIAL_USE_CASE)!
+
+const downloading = ref(false)
+const masterCheckboxRef = ref<HTMLInputElement | null>(null)
 
 const items = ref<CheckItem[]>([
   { key: 'total_llamadas', label: 'Total de Llamadas', checked: false },
@@ -29,18 +31,21 @@ const items = ref<CheckItem[]>([
   { key: 'historial', label: 'Historial', checked: false },
 ])
 
-const downloading = ref(false)
-const allChecked = ref(false)
+const totalSelected = computed(() => items.value.filter((i) => i.checked).length)
+const isAllChecked = computed(() => items.value.length > 0 && totalSelected.value === items.value.length)
+const isIndeterminate = computed(() => totalSelected.value > 0 && totalSelected.value < items.value.length)
 
-function toggleAll(): void {
-  allChecked.value = !allChecked.value
+watch(isIndeterminate, (newVal) => {
+  if (masterCheckboxRef.value) {
+    masterCheckboxRef.value.indeterminate = newVal
+  }
+})
+
+function toggleAll(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked
   items.value.forEach((item) => {
-    item.checked = allChecked.value
+    item.checked = checked
   })
-}
-
-function onCheckChange(): void {
-  allChecked.value = items.value.every((item) => item.checked)
 }
 
 async function handleDownload(): Promise<void> {
@@ -50,11 +55,11 @@ async function handleDownload(): Promise<void> {
   downloading.value = true
   try {
     await downloadReport(selected, { getDashboardData, getClients, getHistorial })
+    close()
   } catch (err) {
     console.error('Error al descargar reporte:', err)
   } finally {
     downloading.value = false
-    close()
   }
 }
 </script>
@@ -62,79 +67,76 @@ async function handleDownload(): Promise<void> {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div
-        v-if="isOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center"
-      >
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="close" />
+      <div v-if="isOpen" class="fixed inset-0 z-9999! flex flex-col items-center justify-center p-4 w-screen h-screen">
+        
+        <div class="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm" @click="close" />
 
-        <!-- Modal -->
         <div
-          class="relative bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-2xl w-full max-w-lg mx-xl p-xl space-y-lg z-10"
+          class="relative block! bg-white rounded-xl border border-neutral-200 shadow-xl w-full max-w-md min-w-80 max-h-[90vh] z-10 overflow-hidden transform transition-all"
         >
-          <!-- Header -->
-          <div class="flex items-center justify-between">
-            <h2 class="font-headline-sm text-headline-sm text-primary">Descargar Reportes</h2>
+          <div class="p-6 pb-4 flex items-center justify-between border-b border-neutral-100">
+            <h2 class="text-lg font-bold text-neutral-900">Descargar Reportes</h2>
             <button
-              class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant"
+              class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors text-neutral-400 hover:text-neutral-600"
               @click="close"
             >
-              <span class="material-symbols-outlined">close</span>
+              <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
 
-          <p class="text-body-sm text-body-sm text-on-surface-variant">
-            Selecciona la información que deseas incluir en el reporte:
-          </p>
+          <div class="p-6 space-y-4 overflow-y-auto max-h-[50vh] custom-scrollbar">
+            <p class="text-sm text-neutral-500">
+              Selecciona la información estructurada que deseas incluir en el documento descargable:
+            </p>
 
-          <!-- Select All -->
-          <label class="flex items-center gap-md py-sm border-b border-outline-variant/50 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              :checked="allChecked"
-              class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"
-              @change="toggleAll"
-            />
-            <span class="font-label-md text-label-md text-on-surface">Seleccionar todo</span>
-          </label>
-
-          <!-- Checklist -->
-          <div class="space-y-sm max-h-64 overflow-y-auto pr-sm">
             <label
-              v-for="item in items"
-              :key="item.key"
-              class="flex items-center gap-md py-sm px-sm rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer select-none"
+              class="flex items-center gap-3 p-3 bg-neutral-50 rounded-lg cursor-pointer select-none border border-neutral-200/60 hover:bg-neutral-100 transition-colors"
             >
               <input
-                v-model="item.checked"
+                ref="masterCheckboxRef"
                 type="checkbox"
-                class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"
-                @change="onCheckChange"
+                :checked="isAllChecked"
+                class="w-4 h-4 rounded border-neutral-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
+                @change="toggleAll"
               />
-              <span class="font-body-md text-body-md text-on-surface">{{ item.label }}</span>
+              <span class="text-sm font-semibold text-neutral-800">Seleccionar todo</span>
             </label>
+
+            <div class="space-y-1 pt-1">
+              <label
+                v-for="item in items"
+                :key="item.key"
+                class="flex items-center gap-3 p-2.5 rounded-lg border border-transparent hover:bg-neutral-50 transition-colors cursor-pointer select-none"
+              >
+                <input
+                  v-model="item.checked"
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-neutral-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600"
+                />
+                <span class="text-sm text-neutral-700 font-medium">{{ item.label }}</span>
+              </label>
+            </div>
           </div>
 
-          <!-- Actions -->
-          <div class="flex items-center justify-end gap-md pt-sm border-t border-outline-variant/50">
+          <div class="p-6 pt-4 flex items-center justify-end gap-3 border-t border-neutral-100 bg-white">
             <button
-              class="px-lg py-sm rounded-lg border border-outline-variant text-on-surface-variant font-label-md hover:bg-surface-container-low transition-all"
+              class="px-4 py-2 text-sm font-semibold rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-colors"
               @click="close"
             >
               Cancelar
             </button>
             <button
-              class="px-lg py-sm rounded-lg bg-primary text-on-primary font-label-md flex items-center gap-xs hover:opacity-90 transition-all disabled:opacity-50"
-              :disabled="downloading || items.every((i) => !i.checked)"
+              class="px-5 py-2 text-sm font-semibold rounded-lg bg-neutral-900 text-white flex items-center gap-2 hover:bg-neutral-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+              :disabled="downloading || totalSelected === 0"
               @click="handleDownload"
             >
-              <span v-if="downloading" class="material-symbols-outlined animate-spin text-[18px]">sync</span>
-              <span v-else class="material-symbols-outlined text-[18px]">download</span>
+              <span v-if="downloading" class="material-symbols-outlined animate-spin text-[16px]">sync</span>
+              <span v-else class="material-symbols-outlined text-[16px]">download</span>
               {{ downloading ? 'Generando...' : 'Descargar' }}
             </button>
           </div>
         </div>
+
       </div>
     </Transition>
   </Teleport>
@@ -143,18 +145,24 @@ async function handleDownload(): Promise<void> {
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.2s ease;
-}
-.modal-enter-active > div > div,
-.modal-leave-active > div > div {
-  transition: transform 0.2s ease;
+  transition: opacity 0.15s ease-out;
 }
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
 }
-.modal-enter-from > div > div,
-.modal-leave-to > div > div {
-  transform: scale(0.95);
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d4;
 }
 </style>

@@ -1,7 +1,6 @@
 import type { ClientRepository } from '@/domain/repositories/client-repository.interface'
 import type { ClientEntity } from '@/domain/entities/client.entity'
 
-/** Tipo del objeto que devuelve la API (snake_case keys con espacios) */
 interface ApiContacto {
   row_number: number
   'ID Cliente': number
@@ -22,13 +21,6 @@ interface ApiContacto {
   'Observaciones': string
 }
 
-/**
- * Implementación del repositorio de clientes que consume la API real.
- *
- * Responsabilidad única: mapear datos de la API → entidad de dominio.
- * Principio LSP — es 100% sustituible por MockClientRepository.
- * Principio DIP — implementa la abstracción ClientRepository.
- */
 export class ApiClientRepository implements ClientRepository {
   private readonly apiUrl = import.meta.env.VITE_API_CLIENTS_URL
 
@@ -69,10 +61,7 @@ export class ApiClientRepository implements ClientRepository {
     )
   }
 
-  /**
-   * Mapea un registro de la API a nuestra entidad de dominio.
-   * Principio SRP — el mapeo está aislado aquí, si cambia la API solo cambia este método.
-   */
+
   private mapToEntity(item: ApiContacto): ClientEntity {
     const nombreEmpresa = item['Nombre Empresa'] || 'Sin nombre'
 
@@ -82,7 +71,6 @@ export class ApiClientRepository implements ClientRepository {
       contactoPrincipal: item['Contacto Principal'] || '—',
       phone: this.formatPhone(item['Teléfono']),
       email: item['Correo'] || '',
-      // --- Campos para el detalle ---
       folio: `#CL-${item['ID Cliente']}`,
       date: this.formatDate(item['Fecha Alta']),
       initials: this.getInitials(nombreEmpresa),
@@ -116,7 +104,6 @@ export class ApiClientRepository implements ClientRepository {
     if (tipo.includes('pyme') || tipo.includes('básico') || tipo.includes('comercial')) {
       return 'Residencial'
     }
-    // Dedicado, Empresarial, Educativo, Hotelero, Industrial, MPLS → Empresarial
     return 'Empresarial'
   }
 
@@ -142,7 +129,6 @@ export class ApiClientRepository implements ClientRepository {
   private formatPhone(phone: number): string {
     if (!phone) return '—'
     const str = String(phone)
-    // Formato: +52 XX XXXX XXXX
     if (str.length === 12 && str.startsWith('52')) {
       return `+${str.slice(0, 2)} ${str.slice(2, 4)} ${str.slice(4, 8)} ${str.slice(8)}`
     }

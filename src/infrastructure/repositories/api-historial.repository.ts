@@ -1,7 +1,6 @@
 import type { HistorialRepository } from '@/domain/repositories/historial-repository.interface'
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
 
-/** Tipo del objeto que devuelve la API */
 interface ApiHistorial {
   row_number: number
   Folio: string
