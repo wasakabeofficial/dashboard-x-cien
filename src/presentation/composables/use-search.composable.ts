@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 
 /**
  * Búsqueda global compartida entre TopNav y las vistas.

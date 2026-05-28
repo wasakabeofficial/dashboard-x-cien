@@ -7,6 +7,11 @@ import type { ClientEntity } from '@/domain/entities/client.entity'
 import type { HistorialEntryEntity } from '@/domain/entities/historial.entity'
 import type { DashboardDataEntity } from '@/domain/entities/dashboard.entity'
 
+/** Extensión local para acceder a la propiedad que jspdf-autotable inyecta en jsPDF */
+interface JsPdfWithAutoTable extends jsPDF {
+  lastAutoTable?: { finalY: number }
+}
+
 /** Casos de uso que necesita el servicio de reportes */
 export interface ReportUseCases {
   getDashboardData: GetDashboardDataUseCase
@@ -254,7 +259,7 @@ function addGestionClientes(doc: jsPDF, y: number, clients: ClientEntity[]): num
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).lastAutoTable?.finalY ?? y + 10
+  return (doc as JsPdfWithAutoTable).lastAutoTable?.finalY ?? y + 10
 }
 
 function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]): number {
@@ -267,5 +272,5 @@ function addHistorial(doc: jsPDF, y: number, historial: HistorialEntryEntity[]):
     styles: { fontSize: 8, cellPadding: 2 },
     margin: { left: 20, right: 20 },
   })
-  return (doc as any).lastAutoTable?.finalY ?? y + 10
+  return (doc as JsPdfWithAutoTable).lastAutoTable?.finalY ?? y + 10
 }
