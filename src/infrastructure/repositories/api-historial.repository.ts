@@ -29,6 +29,11 @@ export class ApiHistorialRepository implements HistorialRepository {
     return data.map((item) => this.mapToEntity(item))
   }
 
+  async getByFolio(folio: string): Promise<HistorialEntryEntity | null> {
+    const all = await this.getAll()
+    return all.find((e) => e.folio === folio) ?? null
+  }
+
   private mapToEntity(item: ApiHistorial): HistorialEntryEntity {
     return {
       folio: item.Folio || '—',

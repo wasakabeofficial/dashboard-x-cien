@@ -19,6 +19,11 @@ const router = createRouter({
       component: () => import('@/presentation/views/HistorialView.vue'),
     },
     {
+      path: '/historial/:folio',
+      name: 'historial-detail',
+      component: () => import('@/presentation/views/HistorialDetailView.vue'),
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: () => import('@/presentation/views/SettingsView.vue'),

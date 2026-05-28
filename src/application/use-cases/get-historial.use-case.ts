@@ -7,4 +7,8 @@ export class GetHistorialUseCase {
   async execute(): Promise<HistorialEntryEntity[]> {
     return this.historialRepository.getAll()
   }
+
+  async getByFolio(folio: string): Promise<HistorialEntryEntity | null> {
+    return this.historialRepository.getByFolio(folio)
+  }
 }

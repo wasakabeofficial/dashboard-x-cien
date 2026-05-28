@@ -20,7 +20,12 @@ export function useHistorial() {
     }
   }
 
+  async function getEntryByFolio(folio: string): Promise<HistorialEntryEntity | null> {
+    const useCase = serviceLocator.getHistorial()
+    return useCase.getByFolio(folio)
+  }
+
   onMounted(load)
 
-  return { entries, loading, error, load }
+  return { entries, loading, error, load, getEntryByFolio }
 }
